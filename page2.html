@@ -5,132 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 2</title>
     <style>
-        :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338ca;
-            --secondary: #eef2ff;
-            --bg-color: #F3F4F6;
-            --card-bg: #ffffff;
-            --text-dark: #1F2937;
-            --text-light: #6B7280;
-            --border: #E5E7EB;
-            --danger: #ef4444;
-        }
-
+        :root { --primary: #4F46E5; --primary-hover: #4338ca; --secondary: #eef2ff; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
-
-        body {
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            color: var(--text-dark);
-        }
-
-        .container {
-            width: 95%; 
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-
-        /* HEADER */
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        body { background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
+        .container { width: 95%; max-width: 1600px; margin: 0 auto; }
+        .header { background: var(--primary); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
         .step-indicator { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 14px; }
-
-        /* --- GRID LAYOUT --- */
-        #dynamic-content {
-            display: grid;
-            gap: 20px;
-            align-items: start;
-            /* Columns set via JS */
-        }
-
-        /* LANGUAGE COLUMN */
-        .language-section {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            border-top: 5px solid var(--primary);
-            display: flex;
-            flex-direction: column;
-            /* Critical for grid items to respect width */
-            min-width: 0; 
-        }
-
-        .lang-title {
-            font-size: 18px; font-weight: 800; color: var(--primary);
-            margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px;
-            border-bottom: 1px solid #eee; padding-bottom: 10px;
-        }
-
-        /* QUESTION CARD */
-        .question-card {
-            background: #fff; border: 1px solid var(--border); border-radius: 8px;
-            padding: 15px; margin-bottom: 15px; position: relative;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            /* Critical: Prevents card from expanding beyond column */
-            max-width: 100%; 
-        }
-
+        
+        #dynamic-content { display: grid; gap: 20px; align-items: start; }
+        
+        .language-section { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); display: flex; flex-direction: column; min-width: 0; }
+        .lang-title { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        .head-desc-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .head-desc-box label { color: #15803d; }
+        
+        .question-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); max-width: 100%; }
         .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .q-number { font-weight: bold; color: var(--text-dark); font-size: 14px; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;}
-        
         .form-row { margin-bottom: 10px; width: 100%; }
         label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--text-light); }
         
-        /* --- FIXED TEXTAREA STYLES --- */
-        textarea {
-            width: 100%; /* Force it to stay inside parent */
-            padding: 10px;
-            border: 1px solid var(--border); 
-            border-radius: 5px;
-            font-size: 14px; 
-            color: var(--text-dark);
-            
-            /* Logic for Wrapping Long Text */
-            white-space: pre-wrap;       /* Respects line breaks but wraps text */
-            overflow-wrap: break-word;   /* Breaks long words if needed */
-            word-wrap: break-word;       /* Legacy support */
-            word-break: break-word;      /* Ensures wrapping */
-            
-            resize: none;
-            overflow: hidden;
-            min-height: 40px;
-            font-family: inherit; 
-            line-height: 1.5; 
-            display: block;
-            box-sizing: border-box; /* Includes padding in width calculation */
-        }
-
-        textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
-
-        /* OPTIONS GRID */
-        .options-container {
-            background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px dashed var(--border);
-            width: 100%;
-        }
-        /* Using 1 column for options to prevent squishing in side-by-side mode */
-        .options-grid { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 8px; 
-            width: 100%;
-        }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 14px; color: var(--text-dark); }
+        textarea { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; resize: none; overflow: hidden; min-height: 40px; font-family: inherit; line-height: 1.5; display: block; }
+        textarea:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         
-        /* Ensure options stay within bounds */
-        .options-grid div { min-width: 0; } 
-
+        .options-container { background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px dashed var(--border); width: 100%; }
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
+        .options-grid div { min-width: 0; }
+        
         .btn { padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
         .btn-add-opt { background: var(--secondary); color: var(--primary); margin-top: 8px; width: 100%; }
         .btn-add-opt:hover { background: #e0e7ff; }
@@ -138,18 +42,15 @@
         .btn-add-q:hover { opacity: 0.9; }
         .btn-remove { color: var(--danger); background: transparent; padding: 2px 6px; }
         .btn-remove:hover { background: #fee2e2; border-radius: 4px; }
-
-        .form-footer {
-            margin-top: 20px; padding: 20px; display: flex; justify-content: flex-end;
-            background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); gap: 15px;
-        }
+        
+        .form-footer { margin-top: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .group-right { display: flex; gap: 15px; }
         .submit-btn { background-color: #059669; color: white; border: none; padding: 12px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .submit-btn:hover { background-color: #047857; }
         .back-btn { background-color: white; color: var(--text-dark); border: 1px solid var(--border); padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .draft-btn { background-color: #f3f4f6; color: var(--text-dark); border: 1px solid #d1d5db; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
 
-        @media (max-width: 768px) {
-            #dynamic-content { grid-template-columns: 1fr !important; }
-        }
+        @media (max-width: 768px) { #dynamic-content { grid-template-columns: 1fr !important; } }
     </style>
 </head>
 <body>
@@ -164,34 +65,31 @@
         <div id="dynamic-content"></div>
         <div class="form-footer">
             <button type="button" class="back-btn" onclick="history.back()">&larr; Back to Setup</button>
-            <button type="submit" class="submit-btn">Submit Campaign</button>
+            <div class="group-right">
+                <button type="button" class="draft-btn" onclick="savePage2Draft()">Save as Draft</button>
+                <button type="submit" class="submit-btn">Submit Campaign</button>
+            </div>
         </div>
     </form>
 </div>
 
 <script>
-    // --- CONFIGURATION ---
-    // PASTE YOUR GOOGLE DEPLOYMENT URL HERE
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKIgR6BZf5XHmFtGdWnnzFr99V5U_6l-LU3kHB5ONAiVVyND6EjMJDe2dftAWjgfNI/exec'; 
+    const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE'; // <--- PASTE YOUR URL HERE
 
-    // 1. RETRIEVE DATA FROM PAGE 1
+    // 1. DATA FROM PAGE 1
     const storedData = localStorage.getItem('surveyData');
     let surveyData = {};
-    let selectedLanguages = ['Telugu']; // Default
-
     if (storedData) {
         surveyData = JSON.parse(storedData);
-        selectedLanguages = surveyData.languages;
     } else {
-        alert("No data found from Page 1. Redirecting...");
-        // window.location.href = 'page1.html'; // Uncomment to force redirect
+        alert("No data found from Page 1.");
     }
 
+    const selectedLanguages = surveyData.languages || ['Telugu'];
     const MAX_QUESTIONS = 10;
     const MAX_OPTIONS = 10;
     const container = document.getElementById('dynamic-content');
 
-    // 2. TEXTAREA RESIZE
     function autoResize(elem) {
         elem.style.height = 'auto';
         elem.style.height = elem.scrollHeight + 'px';
@@ -200,18 +98,41 @@
         if (e.target.tagName.toLowerCase() === 'textarea') autoResize(e.target);
     });
 
-    // 3. LAYOUT SETUP
     container.style.gridTemplateColumns = `repeat(${selectedLanguages.length}, 1fr)`;
 
-    // 4. GENERATE UI
-    selectedLanguages.forEach(lang => createLanguageSection(lang));
+    // 2. BUILD UI
+    // Check if we have a draft for Page 2
+    const p2Draft = localStorage.getItem('page2Draft');
+    const parsedDraft = p2Draft ? JSON.parse(p2Draft) : null;
 
-    function createLanguageSection(lang) {
+    selectedLanguages.forEach(lang => {
+        createLanguageSection(lang, parsedDraft ? parsedDraft[lang] : null);
+    });
+
+    function createLanguageSection(lang, draftData) {
         const section = document.createElement('div');
         section.className = 'language-section';
         section.id = `section-${lang}`;
-        section.innerHTML = `<div class="lang-title">${lang} Language</div><div id="q-container-${lang}"></div>`;
-        
+
+        // HEADLINE & DESCRIPTION INPUTS
+        const headVal = draftData ? draftData.headline : '';
+        const descVal = draftData ? draftData.desc : '';
+
+        section.innerHTML = `
+            <div class="lang-title">${lang} Language</div>
+            <div class="head-desc-box">
+                <div class="form-row">
+                    <label>Post Headline</label>
+                    <input type="text" name="${lang}_headline" placeholder="Headline for ${lang}" value="${headVal}">
+                </div>
+                <div class="form-row">
+                    <label>Post Copy Description</label>
+                    <textarea name="${lang}_description" placeholder="Description for ${lang}" rows="2">${descVal}</textarea>
+                </div>
+            </div>
+            <div id="q-container-${lang}"></div>
+        `;
+
         const addQBtn = document.createElement('button');
         addQBtn.type = "button";
         addQBtn.className = "btn btn-add-q";
@@ -220,14 +141,21 @@
         section.appendChild(addQBtn);
 
         container.appendChild(section);
-        addQuestion(lang);
+
+        // If draft exists, rebuild questions. Else add default.
+        if (draftData && draftData.questions && draftData.questions.length > 0) {
+            draftData.questions.forEach((q, idx) => {
+                addQuestion(lang, q.text, q.options);
+            });
+        } else {
+            addQuestion(lang);
+        }
     }
 
-    function addQuestion(lang) {
+    function addQuestion(lang, textVal = "", optsVal = []) {
         const qContainer = document.getElementById(`q-container-${lang}`);
         const qIndex = qContainer.children.length + 1;
-        
-        if (qIndex > MAX_QUESTIONS) { alert(`Max ${MAX_QUESTIONS} questions.`); return; }
+        if (qIndex > MAX_QUESTIONS) { alert("Max questions reached."); return; }
 
         const card = document.createElement('div');
         card.className = 'question-card';
@@ -237,7 +165,7 @@
                 ${qIndex > 1 ? `<button type="button" class="btn btn-remove" onclick="this.closest('.question-card').remove()">Remove</button>` : ''}
             </div>
             <div class="form-row">
-                <textarea name="${lang}_q${qIndex}_text" placeholder="Type Question Here..." rows="1"></textarea>
+                <textarea name="${lang}_q${qIndex}_text" placeholder="Type Question Here..." rows="1">${textVal}</textarea>
             </div>
             <div class="options-container">
                 <label>Options</label>
@@ -248,82 +176,95 @@
         qContainer.appendChild(card);
         const newTa = card.querySelector('textarea');
         autoResize(newTa);
-        
-        addOption(lang, qIndex);
-        addOption(lang, qIndex);
+
+        if (optsVal.length > 0) {
+            optsVal.forEach(opt => addOption(lang, qIndex, opt));
+        } else {
+            addOption(lang, qIndex);
+            addOption(lang, qIndex);
+        }
     }
 
-    function addOption(lang, qIndex) {
+    function addOption(lang, qIndex, val = "") {
         const optContainer = document.getElementById(`${lang}_q${qIndex}_options`);
         const optIndex = optContainer.children.length + 1;
-
-        if (optIndex > MAX_OPTIONS) { alert("Max 10 options."); return; }
+        if (optIndex > MAX_OPTIONS) { alert("Max options reached."); return; }
 
         const optDiv = document.createElement('div');
-        optDiv.innerHTML = `<textarea name="${lang}_q${qIndex}_opt${optIndex}" placeholder="Option ${optIndex}" rows="1"></textarea>`;
+        optDiv.innerHTML = `<textarea name="${lang}_q${qIndex}_opt${optIndex}" placeholder="Option ${optIndex}" rows="1">${val}</textarea>`;
         optContainer.appendChild(optDiv);
         const newTa = optDiv.querySelector('textarea');
         autoResize(newTa);
     }
 
-    // 5. SUBMIT TO GOOGLE SHEETS
+    // --- SAVE DRAFT LOGIC ---
+    function scrapePage2() {
+        // We need to construct an object of all data currently on screen
+        let data = {};
+        selectedLanguages.forEach(lang => {
+            // Get Headline/Desc
+            const headline = document.querySelector(`input[name="${lang}_headline"]`).value;
+            const desc = document.querySelector(`textarea[name="${lang}_description"]`).value;
+            
+            // Get Questions
+            let questions = [];
+            const qContainer = document.getElementById(`q-container-${lang}`);
+            const cards = qContainer.querySelectorAll('.question-card');
+            
+            cards.forEach((card, idx) => {
+                const qText = card.querySelector(`textarea[name^="${lang}_q"]`).value; // name starts with lang_q
+                
+                let opts = [];
+                const optDivs = card.querySelectorAll('.options-grid textarea');
+                optDivs.forEach(opt => opts.push(opt.value));
+                
+                questions.push({ text: qText, options: opts });
+            });
+
+            data[lang] = { headline: headline, desc: desc, questions: questions };
+        });
+        return data;
+    }
+
+    function savePage2Draft() {
+        const data = scrapePage2();
+        localStorage.setItem('page2Draft', JSON.stringify(data));
+        alert("Draft saved!");
+    }
+
+    // --- SUBMIT LOGIC ---
     document.getElementById('campaignForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        const submitBtn = document.querySelector('.submit-btn');
-        const originalText = submitBtn.innerText;
-        submitBtn.innerText = "Sending...";
-        submitBtn.disabled = true;
+        const btn = document.querySelector('.submit-btn');
+        const oldText = btn.innerText;
+        btn.innerText = "Sending..."; btn.disabled = true;
 
-        // A. Scrape Page 2 Data
-        const formData = new FormData(e.target);
-        let questionsData = {};
+        const page2Data = scrapePage2(); // Reuse draft scraper
 
-        // Helper to structure data: { Telugu: { Q1: { text: "", options: [] } } }
-        for (let [key, value] of formData.entries()) {
-            // key example: "Telugu_q1_text" or "Telugu_q1_opt1"
-            let parts = key.split('_'); 
-            let lang = parts[0];
-            let qNum = parts[1]; // q1
-            let type = parts[2]; // text or optX
-
-            if (!questionsData[lang]) questionsData[lang] = {};
-            if (!questionsData[lang][qNum]) questionsData[lang][qNum] = { text: "", options: [] };
-
-            if (type === 'text') {
-                questionsData[lang][qNum].text = value;
-            } else if (type.startsWith('opt')) {
-                if(value.trim() !== "") questionsData[lang][qNum].options.push(value);
-            }
-        }
-
-        // B. Combine Page 1 and Page 2
+        // Merge with Page 1 Data
         const finalPayload = {
             general: surveyData,
-            questions: questionsData
+            content: page2Data // Contains Headline, Desc, Questions
         };
 
-        // C. Send to Google Apps Script
         fetch(SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Important for Google Apps Script
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(finalPayload)
-        }).then(response => {
-            alert("Success! Campaign Request Sent.");
-            submitBtn.innerText = "Sent!";
-            // Optional: Clear storage
-            // localStorage.removeItem('surveyData');
-        }).catch(error => {
-            console.error('Error:', error);
-            alert("Something went wrong.");
-            submitBtn.innerText = originalText;
-            submitBtn.disabled = false;
+        }).then(() => {
+            alert("Success! Sent to Google Sheet.");
+            btn.innerText = "Sent!";
+            // Optional: Clear drafts
+            localStorage.removeItem('page1Draft');
+            localStorage.removeItem('page2Draft');
+            localStorage.removeItem('surveyData');
+        }).catch(err => {
+            console.error(err);
+            alert("Error sending.");
+            btn.innerText = oldText; btn.disabled = false;
         });
     });
 </script>
-
 </body>
 </html>
