@@ -18,7 +18,6 @@
         .language-section { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); display: flex; flex-direction: column; min-width: 0; }
         .lang-title { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         
-        /* Headline & Description Box */
         .head-desc-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .head-desc-box label { color: #15803d; }
         
@@ -29,7 +28,6 @@
         label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--text-light); }
         
         input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 14px; color: var(--text-dark); }
-        /* Fix for textarea wrapping */
         textarea { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; resize: none; overflow: hidden; min-height: 40px; font-family: inherit; line-height: 1.5; display: block; }
         textarea:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         
@@ -94,7 +92,6 @@
     const MAX_OPTIONS = 10;
     const container = document.getElementById('dynamic-content');
 
-    // Textarea Auto-Resize
     function autoResize(elem) {
         elem.style.height = 'auto';
         elem.style.height = elem.scrollHeight + 'px';
@@ -106,13 +103,12 @@
     container.style.gridTemplateColumns = `repeat(${selectedLanguages.length}, 1fr)`;
 
     // ------------------------------------------------------------------
-    // 2. BUILD UI (With Draft Loading)
+    // 2. BUILD UI
     // ------------------------------------------------------------------
     const p2Draft = localStorage.getItem('page2Draft');
     const parsedDraft = p2Draft ? JSON.parse(p2Draft) : null;
 
     selectedLanguages.forEach(lang => {
-        // If we have a draft for this language, use it. Otherwise null.
         const draftForLang = parsedDraft ? parsedDraft[lang] : null;
         createLanguageSection(lang, draftForLang);
     });
@@ -122,7 +118,6 @@
         section.className = 'language-section';
         section.id = `section-${lang}`;
 
-        // Get values if draft exists
         const headVal = draftData ? draftData.headline : '';
         const descVal = draftData ? draftData.desc : '';
 
@@ -150,7 +145,6 @@
 
         container.appendChild(section);
 
-        // Rebuild questions from draft or add default
         if (draftData && draftData.questions && draftData.questions.length > 0) {
             draftData.questions.forEach(q => {
                 addQuestion(lang, q.text, q.options);
@@ -206,47 +200,26 @@
     }
 
     // ------------------------------------------------------------------
-    // 3. SCRAPING DATA (THE CRITICAL PART)
+    // 3. SCRAPE & SAVE
     // ------------------------------------------------------------------
     function scrapePage2() {
         let data = {};
-        
         selectedLanguages.forEach(lang => {
             const section = document.getElementById(`section-${lang}`);
+            const headline = section.querySelector('.input-headline').value;
+            const desc = section.querySelector('.input-desc').value;
             
-            // 1. Get Headline & Desc (Safely)
-            const headlineInput = section.querySelector('.input-headline');
-            const descInput = section.querySelector('.input-desc');
-            const headline = headlineInput ? headlineInput.value : "";
-            const desc = descInput ? descInput.value : "";
-            
-            // 2. Get Questions
             let questions = [];
-            const qContainer = document.getElementById(`q-container-${lang}`);
-            const cards = qContainer.querySelectorAll('.question-card');
-            
+            const cards = section.querySelectorAll('.question-card');
             cards.forEach(card => {
-                const qTextInput = card.querySelector('.input-q-text');
-                const qText = qTextInput ? qTextInput.value : "";
-                
-                // Get Options
+                const qText = card.querySelector('.input-q-text').value;
                 let opts = [];
                 const optInputs = card.querySelectorAll('.input-opt');
-                optInputs.forEach(opt => {
-                    if(opt.value.trim() !== "") opts.push(opt.value);
-                });
-                
+                optInputs.forEach(opt => { if(opt.value.trim() !== "") opts.push(opt.value); });
                 questions.push({ text: qText, options: opts });
             });
-
-            // Store in data object
-            data[lang] = { 
-                headline: headline, 
-                desc: desc, 
-                questions: questions 
-            };
+            data[lang] = { headline: headline, desc: desc, questions: questions };
         });
-        
         return data;
     }
 
@@ -257,25 +230,17 @@
     }
 
     // ------------------------------------------------------------------
-    // 4. SUBMIT TO GOOGLE SHEETS
+    // 4. SUBMIT TO GOOGLE SHEETS & CLEAR FORM
     // ------------------------------------------------------------------
     document.getElementById('campaignForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.querySelector('.submit-btn');
         const oldText = btn.innerText;
-        btn.innerText = "Sending..."; 
-        btn.disabled = true;
+        btn.innerText = "Sending..."; btn.disabled = true;
 
-        // Scrape the data cleanly
         const page2Data = scrapePage2(); 
+        const finalPayload = { general: surveyData, content: page2Data };
 
-        // Combine with Page 1 Data
-        const finalPayload = {
-            general: surveyData,
-            content: page2Data 
-        };
-
-        // Send
         fetch(SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors',
@@ -283,20 +248,19 @@
             body: JSON.stringify(finalPayload)
         }).then(() => {
             alert("Success! Campaign Request Sent.");
-            btn.innerText = "Sent!";
             
-            // Clear drafts on success
+            // --- CLEAR EVERYTHING ---
             localStorage.removeItem('page1Draft');
             localStorage.removeItem('page2Draft');
             localStorage.removeItem('surveyData');
             
-            // Optional: redirect to a thank you page or Page 1
-            // window.location.href = 'index.html'; 
+            // --- REDIRECT TO HOME ---
+            window.location.href = 'index.html'; 
+            
         }).catch(err => {
             console.error(err);
-            alert("Error sending to Google Sheet. Check console.");
-            btn.innerText = oldText; 
-            btn.disabled = false;
+            alert("Error sending to Google Sheet.");
+            btn.innerText = oldText; btn.disabled = false;
         });
     });
 </script>
