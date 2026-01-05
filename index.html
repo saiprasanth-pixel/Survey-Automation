@@ -5,141 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 1</title>
     <style>
-        :root {
-            --primary: #4F46E5; /* Indigo */
-            --primary-hover: #4338ca;
-            --bg-color: #F3F4F6;
-            --card-bg: #ffffff;
-            --text-dark: #1F2937;
-            --text-light: #6B7280;
-            --border: #E5E7EB;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 40px 20px;
-            color: var(--text-dark);
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            background: var(--primary);
-            color: white;
-            padding: 25px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-radius: 12px 12px 0 0;
-        }
-
+        :root { --primary: #4F46E5; --primary-hover: #4338ca; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; }
+        * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-color); margin: 0; padding: 40px 20px; color: var(--text-dark); }
+        .container { max-width: 900px; margin: 0 auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .header { background: var(--primary); color: white; padding: 25px 40px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
         .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
         .step-indicator { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 14px; }
-
         form { padding: 40px; }
-
-        .section-title {
-            font-size: 18px; font-weight: 700; color: var(--text-dark);
-            margin-bottom: 20px; padding-bottom: 10px;
-            border-bottom: 2px solid var(--border); margin-top: 30px;
-        }
+        .section-title { font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); margin-top: 30px; }
         .section-title:first-of-type { margin-top: 0; }
-
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
-
         .form-group { margin-bottom: 15px; position: relative; }
-
-        label {
-            display: block; margin-bottom: 6px; font-size: 13px;
-            font-weight: 600; color: var(--text-light); text-transform: uppercase;
-        }
-
-        input, select {
-            width: 100%; padding: 10px 12px;
-            border: 1px solid var(--border); border-radius: 6px;
-            font-size: 15px; color: var(--text-dark); background: #fff;
-        }
-
-        input:focus, select:focus {
-            outline: none; border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        /* --- Multi-Select Checkboxes Styles --- */
+        label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; color: var(--text-dark); background: #fff; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        
+        /* Multi-Select Styles */
         .multiselect { width: 100%; position: relative; }
         .selectBox { position: relative; cursor: pointer; }
         .selectBox select { width: 100%; font-weight: bold; cursor: pointer; }
         .overSelect { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
-
-        #checkboxes {
-            display: none;
-            border: 1px solid var(--border);
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            max-height: 200px;
-            overflow-y: auto;
-            position: absolute;
-            width: 100%;
-            z-index: 10;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        #checkboxes label {
-            display: flex; 
-            align-items: center;
-            padding: 8px 12px;
-            margin: 0;
-            font-weight: normal;
-            font-size: 14px;
-            color: var(--text-dark);
-            cursor: pointer;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
+        #checkboxes { display: none; border: 1px solid var(--border); border-top: none; border-radius: 0 0 6px 6px; max-height: 200px; overflow-y: auto; position: absolute; width: 100%; z-index: 10; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        #checkboxes label { display: flex; align-items: center; padding: 8px 12px; margin: 0; font-weight: normal; font-size: 14px; color: var(--text-dark); cursor: pointer; border-bottom: 1px solid #f3f4f6; }
         #checkboxes label:hover { background-color: #f3f4f6; }
         #checkboxes label input { width: auto; margin-right: 10px; margin-top: 0; }
+
+        .custom-wrapper { display: none; margin-top: 10px; padding: 15px; background: #f9fafb; border: 1px dashed var(--border); border-radius: 6px; }
         
-        /* -------------------------------------- */
-
-        .custom-age-wrapper {
-            display: none;
-            margin-top: 10px;
-            padding: 15px;
-            background: #f9fafb;
-            border: 1px dashed var(--border);
-            border-radius: 6px;
-        }
-
         .creative-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .creative-table th, .creative-table td { border: 1px solid var(--border); padding: 12px; text-align: left; }
         .creative-table th { background-color: #f9fafb; font-size: 13px; color: var(--text-light); }
+        
+        .btn-add-creative { background: #eef2ff; color: var(--primary); border: 1px dashed var(--primary); padding: 8px 15px; border-radius: 6px; cursor: pointer; margin-top: 10px; font-size: 13px; font-weight: 600; width: 100%; }
+        .btn-add-creative:hover { background: #e0e7ff; }
 
-        .form-footer { margin-top: 40px; display: flex; justify-content: flex-end; }
-        .next-btn {
-            background-color: var(--primary); color: white; border: none;
-            padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: background 0.2s;
-        }
+        .form-footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .next-btn { background-color: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .next-btn:hover { background-color: var(--primary-hover); }
+        .draft-btn { background-color: white; color: var(--text-dark); border: 1px solid var(--border); padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .draft-btn:hover { background-color: #f3f4f6; }
 
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: span 1; }
-        }
+        @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
@@ -150,263 +58,310 @@
         <div class="step-indicator">Page 1 of 2</div>
     </div>
 
-    <form id="page1Form" action="#" method="POST">
-        
+    <form id="page1Form">
         <div class="section-title">General Information</div>
         <div class="form-grid">
             <div class="form-group">
                 <label>Name of the Survey</label>
-                <input type="text" value="Aspirations Survey" required>
+                <input type="text" id="surveyName" placeholder="e.g. Aspirations Survey" required>
             </div>
             <div class="form-group">
                 <label>Survey Start Date</label>
-                <input type="date" value="2026-01-06" required>
+                <input type="date" id="surveyDate" required>
             </div>
-            
             <div class="form-group">
                 <label>Approval By</label>
-                <select name="approval_by" required>
-                    <option value="" disabled>Select Approver</option>
-                    <option value="Ishan Sharma" selected>Ishan Sharma</option>
+                <select id="approvalBy" required>
+                    <option value="" disabled selected>Select Approver</option>
+                    <option value="Ishan Sharma">Ishan Sharma</option>
                     <option value="Manager B">Manager B</option>
-                    <option value="Manager C">Manager C</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>POC Name</label>
-                <input type="text" value="Prasanth Katuru" required>
+                <input type="text" id="pocName" placeholder="Enter POC Name" required>
             </div>
             <div class="form-group">
                 <label>POC Email</label>
-                <input type="email" value="sai.prasanth@themindshare.in" required>
+                <input type="email" id="pocEmail" placeholder="Enter POC Email" required>
             </div>
             <div class="form-group">
                 <label>Overall Budget</label>
-                <input type="number" placeholder="Enter Amount" required>
+                <input type="number" id="overallBudget" placeholder="Enter Amount" required>
             </div>
         </div>
 
         <div class="section-title">Location Targeting</div>
         <div class="form-grid">
-            <div class="full-width">
-                <small style="color: #ef4444; font-weight: bold;">* Fill Only 1: Either Location OR Pincodes</small>
-            </div>
-            
+            <div class="full-width"><small style="color: #ef4444; font-weight: bold;">* Fill Only 1: Either Location OR Pincodes</small></div>
             <div class="form-group">
                 <label>Number of Target Locations</label>
-                <input type="number" value="1" required>
+                <input type="number" id="locCount" value="1" required>
             </div>
-            
             <div class="form-group">
                 <label>Name of Location(s)</label>
-                <input type="text" id="locName" value="Hyderabad, Khammam" placeholder="e.g. Hyderabad, Khammam, Warangal">
-                <small style="color:#666; font-size:11px;">Separate multiple locations with commas</small>
+                <input type="text" id="locName" placeholder="e.g. Hyderabad, Khammam">
+                <small style="color:#666; font-size:11px;">Separate with commas</small>
             </div>
-
             <div class="form-group full-width">
-                <label>Pincodes (If not City/State)</label>
+                <label>Pincodes</label>
                 <input type="text" id="locPin" placeholder="e.g. 500081, 500032">
             </div>
         </div>
 
         <div class="section-title">Demographics</div>
         <div class="form-grid">
-            
             <div class="form-group full-width">
                 <label>Specific Age Targeting?</label>
                 <select id="ageTargetSelect" onchange="toggleAgeInput()">
                     <option value="No" selected>No (General 18-65+)</option>
                     <option value="Yes">Yes</option>
                 </select>
-
-                <div id="customAgeInput" class="custom-age-wrapper">
+                <div id="customAgeInput" class="custom-wrapper">
                     <label style="color: #4F46E5;">Enter Custom Age Ranges</label>
                     <input type="text" id="customAgeText" placeholder="e.g. 18-24, 35-60">
-                    <small style="color: #666; display:block; margin-top:5px;">Separate multiple ranges with commas.</small>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group full-width">
                 <label>Gender Targeting</label>
-                <select>
-                    <option value="All">All Genders</option>
+                <select id="genderSelect" onchange="toggleGenderInputs()">
+                    <option value="All" selected>All Genders</option>
                     <option value="Male">Male Only</option>
                     <option value="Female">Female Only</option>
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="maleTargetWrapper">
+                <label>Male Target Number</label>
+                <input type="number" id="maleTargetNum" placeholder="e.g. 5000">
+            </div>
+            <div class="form-group" id="femaleTargetWrapper">
+                <label>Female Target Number</label>
+                <input type="number" id="femaleTargetNum" placeholder="e.g. 5000">
+            </div>
+
+            <div class="form-group full-width">
                 <label>Targeting Language (Max 3)</label>
                 <div class="multiselect">
                     <div class="selectBox" onclick="showCheckboxes()">
-                        <select>
-                            <option id="languageDisplayText">Select Languages</option> 
-                        </select>
+                        <select><option id="languageDisplayText">Select Languages</option></select>
                         <div class="overSelect"></div>
                     </div>
                     <div id="checkboxes">
-                        <label for="telugu">
-                            <input type="checkbox" id="telugu" onchange="updateLanguageDisplay(this)" /> Telugu
-                        </label>
-                        <label for="hindi">
-                            <input type="checkbox" id="hindi" onchange="updateLanguageDisplay(this)" /> Hindi
-                        </label>
-                        <label for="tamil">
-                            <input type="checkbox" id="tamil" onchange="updateLanguageDisplay(this)" /> Tamil
-                        </label>
-                        <label for="english">
-                            <input type="checkbox" id="english" onchange="updateLanguageDisplay(this)" /> English
-                        </label>
-                        <label for="kannada">
-                            <input type="checkbox" id="kannada" onchange="updateLanguageDisplay(this)" /> Kannada
-                        </label>
-                        <label for="malayalam">
-                            <input type="checkbox" id="malayalam" onchange="updateLanguageDisplay(this)" /> Malayalam
-                        </label>
+                        <label><input type="checkbox" value="Telugu" onchange="updateLanguageDisplay(this)"> Telugu</label>
+                        <label><input type="checkbox" value="Hindi" onchange="updateLanguageDisplay(this)"> Hindi</label>
+                        <label><input type="checkbox" value="Tamil" onchange="updateLanguageDisplay(this)"> Tamil</label>
+                        <label><input type="checkbox" value="English" onchange="updateLanguageDisplay(this)"> English</label>
+                        <label><input type="checkbox" value="Kannada" onchange="updateLanguageDisplay(this)"> Kannada</label>
+                        <label><input type="checkbox" value="Malayalam" onchange="updateLanguageDisplay(this)"> Malayalam</label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="section-title">Creative Links</div>
+        <div class="section-title">Creative Links (Max 3)</div>
         <div class="full-width">
             <table class="creative-table">
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">S.No</th>
-                        <th>Creative Link Name</th>
-                        <th>Image URL</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <thead><tr><th style="width:50px;">S.No</th><th>Creative Link Name</th><th>Image URL</th></tr></thead>
+                <tbody id="creativeBody">
                     <tr>
                         <td>1</td>
-                        <td><input type="text" value="C1" required></td>
-                        <td><input type="text" placeholder="Paste URL here" required></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><input type="text" value="C2" required></td>
-                        <td><input type="text" placeholder="Paste URL here" required></td>
+                        <td><input type="text" class="c-name" placeholder="Enter Name"></td>
+                        <td><input type="text" class="c-url" placeholder="Paste URL here"></td>
                     </tr>
                 </tbody>
             </table>
+            <button type="button" class="btn-add-creative" onclick="addCreativeRow()">+ Add Creative View</button>
         </div>
 
         <div class="form-footer">
+            <button type="button" class="draft-btn" onclick="saveDraft()">Save as Draft</button>
             <button type="button" class="next-btn" onclick="goToPage2()">Next Page &rarr;</button>
         </div>
-
     </form>
 </div>
 
 <script>
-    // 1. Toggle Age Input
-    function toggleAgeInput() {
-        var selectBox = document.getElementById("ageTargetSelect");
-        var customInput = document.getElementById("customAgeInput");
-        var customTextField = document.getElementById("customAgeText");
-        
-        if (selectBox.value === "Yes") {
-            customInput.style.display = "block";
-            customTextField.required = true;
-        } else {
-            customInput.style.display = "none";
-            customTextField.required = false;
+    // --- 1. INITIALIZATION ON LOAD ---
+    window.onload = function() {
+        toggleGenderInputs(); // Set initial state
+        loadDraft(); // Check for saved data
+    };
+
+    // --- 2. GENDER LOGIC ---
+    function toggleGenderInputs() {
+        const val = document.getElementById("genderSelect").value;
+        const maleDiv = document.getElementById("maleTargetWrapper");
+        const femaleDiv = document.getElementById("femaleTargetWrapper");
+
+        if (val === "All") {
+            maleDiv.style.display = "block";
+            femaleDiv.style.display = "block";
+        } else if (val === "Male") {
+            maleDiv.style.display = "block";
+            femaleDiv.style.display = "none";
+        } else if (val === "Female") {
+            maleDiv.style.display = "none";
+            femaleDiv.style.display = "block";
         }
     }
 
-    // 2. Checkboxes Logic
+    // --- 3. CREATIVE LOGIC ---
+    function addCreativeRow() {
+        const tbody = document.getElementById("creativeBody");
+        if (tbody.children.length >= 3) {
+            alert("Maximum 3 creative views allowed.");
+            return;
+        }
+        const count = tbody.children.length + 1;
+        const row = `<tr>
+            <td>${count}</td>
+            <td><input type="text" class="c-name" placeholder="Enter Name"></td>
+            <td><input type="text" class="c-url" placeholder="Paste URL here"></td>
+        </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
+    }
+
+    // --- 4. OTHER UI LOGIC (Age, Lang) ---
+    function toggleAgeInput() {
+        const val = document.getElementById("ageTargetSelect").value;
+        const div = document.getElementById("customAgeInput");
+        div.style.display = (val === "Yes") ? "block" : "none";
+    }
+
     var expanded = false;
     function showCheckboxes() {
         var checkboxes = document.getElementById("checkboxes");
-        if (!expanded) {
-            checkboxes.style.display = "block";
-            expanded = true;
-        } else {
-            checkboxes.style.display = "none";
-            expanded = false;
-        }
+        checkboxes.style.display = expanded ? "none" : "block";
+        expanded = !expanded;
     }
 
-    function updateLanguageDisplay(checkboxElement) {
-        var checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
-        var selectedLanguages = [];
-        var count = 0;
-        
-        checkboxes.forEach((cb) => { if (cb.checked) count++; });
+    function updateLanguageDisplay(checkbox) {
+        const checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
+        let selected = [];
+        checkboxes.forEach(cb => { if(cb.checked) selected.push(cb.value); });
 
-        if (count > 3) {
-            alert("You can select a maximum of 3 languages.");
-            checkboxElement.checked = false; 
+        if (selected.length > 3) {
+            alert("Max 3 languages allowed.");
+            checkbox.checked = false;
             return;
         }
-
-        checkboxes.forEach((cb) => {
-            if (cb.checked) selectedLanguages.push(cb.parentNode.textContent.trim());
-        });
-
-        var displayOption = document.getElementById("languageDisplayText");
-        displayOption.textContent = selectedLanguages.length > 0 ? selectedLanguages.join(', ') : "Select Languages";
+        document.getElementById("languageDisplayText").textContent = selected.length ? selected.join(', ') : "Select Languages";
     }
-    
-    document.addEventListener('click', function(event) {
-        var multiselect = document.querySelector('.multiselect');
-        var checkboxes = document.getElementById("checkboxes");
-        if (expanded && !multiselect.contains(event.target)) {
-            checkboxes.style.display = "none";
-            expanded = false;
-        }
-    });
 
-    // 3. SAVE DATA & NAVIGATION
-    function goToPage2() {
-        var form = document.getElementById("page1Form");
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        var locName = document.getElementById("locName").value.trim();
-        var locPin = document.getElementById("locPin").value.trim();
-
-        if (locName === "" && locPin === "") {
-            alert("Please fill either 'Name of Location' OR 'Pincodes'.");
-            return;
-        }
-
-        // Gather Languages
-        var checkboxes = document.querySelectorAll('#checkboxes input[type="checkbox"]');
-        var selectedLanguages = [];
-        checkboxes.forEach((cb) => {
-            if (cb.checked) selectedLanguages.push(cb.parentNode.textContent.trim());
+    // --- 5. DRAFT & NAVIGATION ---
+    function gatherFormData() {
+        // Collect Creatives
+        let creatives = [];
+        document.querySelectorAll('#creativeBody tr').forEach(row => {
+            creatives.push({
+                name: row.querySelector('.c-name').value,
+                url: row.querySelector('.c-url').value
+            });
         });
 
-        if (selectedLanguages.length === 0) {
-            alert("Please select at least one Target Language.");
-            return;
-        }
+        // Collect Languages
+        let langs = [];
+        document.querySelectorAll('#checkboxes input:checked').forEach(cb => langs.push(cb.value));
 
-        // --- NEW: GATHER ALL GENERAL INFO ---
-        var generalData = {
-            surveyName: document.querySelector('input[value="Aspirations Survey"]').value, // Getting by value as explicit IDs weren't set on all inputs, ideally add IDs
-            startDate: document.querySelector('input[type="date"]').value,
-            approvalBy: document.querySelector('select[name="approval_by"]').value,
-            pocName: document.querySelector('input[value="Prasanth Katuru"]').value,
-            pocEmail: document.querySelector('input[type="email"]').value,
-            budget: document.querySelector('input[placeholder="Enter Amount"]').value,
-            locations: locName || locPin,
-            languages: selectedLanguages
+        return {
+            surveyName: document.getElementById("surveyName").value,
+            surveyDate: document.getElementById("surveyDate").value,
+            approvalBy: document.getElementById("approvalBy").value,
+            pocName: document.getElementById("pocName").value,
+            pocEmail: document.getElementById("pocEmail").value,
+            budget: document.getElementById("overallBudget").value,
+            locCount: document.getElementById("locCount").value,
+            locName: document.getElementById("locName").value,
+            locPin: document.getElementById("locPin").value,
+            ageTarget: document.getElementById("ageTargetSelect").value,
+            customAge: document.getElementById("customAgeText").value,
+            gender: document.getElementById("genderSelect").value,
+            maleCount: document.getElementById("maleTargetNum").value,
+            femaleCount: document.getElementById("femaleTargetNum").value,
+            languages: langs,
+            creatives: creatives
         };
+    }
 
-        // Save entire object to LocalStorage
-        localStorage.setItem('surveyData', JSON.stringify(generalData));
+    function saveDraft() {
+        const data = gatherFormData();
+        localStorage.setItem('page1Draft', JSON.stringify(data));
+        alert("Draft saved! You can close and come back later.");
+    }
+
+    function loadDraft() {
+        const saved = localStorage.getItem('page1Draft');
+        if (!saved) return;
         
-        // Go to next page
+        const data = JSON.parse(saved);
+        
+        // Populate standard fields
+        if(data.surveyName) document.getElementById("surveyName").value = data.surveyName;
+        if(data.surveyDate) document.getElementById("surveyDate").value = data.surveyDate;
+        if(data.approvalBy) document.getElementById("approvalBy").value = data.approvalBy;
+        if(data.pocName) document.getElementById("pocName").value = data.pocName;
+        if(data.pocEmail) document.getElementById("pocEmail").value = data.pocEmail;
+        if(data.budget) document.getElementById("overallBudget").value = data.budget;
+        if(data.locCount) document.getElementById("locCount").value = data.locCount;
+        if(data.locName) document.getElementById("locName").value = data.locName;
+        if(data.locPin) document.getElementById("locPin").value = data.locPin;
+        if(data.ageTarget) {
+            document.getElementById("ageTargetSelect").value = data.ageTarget;
+            toggleAgeInput();
+        }
+        if(data.customAge) document.getElementById("customAgeText").value = data.customAge;
+        if(data.gender) {
+            document.getElementById("genderSelect").value = data.gender;
+            toggleGenderInputs();
+        }
+        if(data.maleCount) document.getElementById("maleTargetNum").value = data.maleCount;
+        if(data.femaleCount) document.getElementById("femaleTargetNum").value = data.femaleCount;
+
+        // Restore Languages
+        if (data.languages) {
+            const boxes = document.querySelectorAll('#checkboxes input');
+            boxes.forEach(cb => {
+                if(data.languages.includes(cb.value)) cb.checked = true;
+            });
+            updateLanguageDisplay({checked:true}); // trigger text update
+        }
+
+        // Restore Creatives
+        if (data.creatives && data.creatives.length > 0) {
+            const tbody = document.getElementById("creativeBody");
+            tbody.innerHTML = ''; // Clear default
+            data.creatives.forEach((c, index) => {
+                const row = `<tr>
+                    <td>${index+1}</td>
+                    <td><input type="text" class="c-name" value="${c.name}"></td>
+                    <td><input type="text" class="c-url" value="${c.url}"></td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+    }
+
+    function goToPage2() {
+        const form = document.getElementById("page1Form");
+        // Simple validation check
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        
+        const data = gatherFormData();
+        
+        // Custom validations
+        if (!data.locName && !data.locPin) { alert("Fill Location OR Pincode"); return; }
+        if (data.languages.length === 0) { alert("Select a language"); return; }
+
+        // Save for Page 2 usage
+        localStorage.setItem('surveyData', JSON.stringify(data));
+        
+        // Also update the draft just in case
+        localStorage.setItem('page1Draft', JSON.stringify(data));
+
         window.location.href = 'page2.html';
     }
 </script>
-
 </body>
 </html>
