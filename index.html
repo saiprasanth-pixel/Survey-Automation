@@ -21,7 +21,10 @@
         label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
         input, select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 15px; color: var(--text-dark); background: #fff; }
         input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
+        
+        /* Error Highlighting */
         input.error, select.error { border-color: var(--danger); background-color: #fef2f2; }
+        .error-msg { color: var(--danger); font-size: 11px; position: absolute; bottom: -18px; left: 0; display: none; }
         
         /* Multi-Select Styles */
         .multiselect { width: 100%; position: relative; }
@@ -86,6 +89,7 @@
             <div class="form-group">
                 <label>POC Email</label>
                 <input type="email" id="pocEmail" placeholder="Enter POC Email" required>
+                <div class="error-msg">Invalid Email format</div>
             </div>
             <div class="form-group">
                 <label>Overall Budget</label>
@@ -270,7 +274,6 @@
     // --- 5. VALIDATION & NAVIGATION ---
     
     function validateEmail(email) {
-        // Strict regex including @ and .
         return String(email)
             .toLowerCase()
             .match(
@@ -282,7 +285,6 @@
         let isValid = true;
         let firstError = null;
         
-        // Helper to mark error
         const markError = (el) => {
             el.classList.add('error');
             if (!firstError) firstError = el;
@@ -300,7 +302,7 @@
         // 2. Email Validation
         const emailEl = document.getElementById("pocEmail");
         if (emailEl.value.trim() && !validateEmail(emailEl.value)) {
-            alert("Please enter a valid email address containing '@' and domain.");
+            alert("Please enter a valid email address (e.g., name@domain.com)");
             markError(emailEl);
         }
 
@@ -342,8 +344,7 @@
             isValid = false;
         }
 
-        // 7. Creative Table Logic (Dynamic)
-        // STRICTLY check every visible input in the table
+        // 7. Creative Table Logic
         document.querySelectorAll('#creativeBody tr').forEach(row => {
             const name = row.querySelector('.c-name');
             const url = row.querySelector('.c-url');
