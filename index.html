@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 1</title>
     <script>
-        // If not logged in, kick back to login page
         if (!localStorage.getItem('authValid') || !localStorage.getItem('userEmail')) {
             window.location.href = 'login.html';
         }
     </script>
     <style>
-        /* ... KEEP YOUR EXISTING CSS FROM PREVIOUS VERSION ... */
         :root { --primary: #4F46E5; --primary-hover: #4338ca; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); margin: 0; padding: 40px 20px; color: var(--text-dark); }
@@ -49,110 +47,55 @@
         .draft-btn { background-color: white; color: var(--text-dark); border: 1px solid var(--border); padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .draft-btn:hover { background-color: #f3f4f6; }
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
-        /* User info bar */
         .user-bar { background: #312e81; color: white; padding: 5px 20px; font-size: 12px; text-align: right; }
     </style>
 </head>
 <body>
 
-<div class="user-bar" id="userDisplay">Logged in as: ...</div>
+<div class="user-bar" id="userDisplay">...</div>
 
 <div class="container">
     <div class="header">
         <h1>Campaign Request Form</h1>
         <div class="step-indicator">Page 1 of 2</div>
     </div>
-    
+
     <form id="page1Form" novalidate>
         <div class="section-title">General Information</div>
         <div class="form-grid">
-            <div class="form-group">
-                <label>Name of the Survey</label>
-                <input type="text" id="surveyName" placeholder="e.g. Aspirations Survey" required>
-            </div>
-            <div class="form-group">
-                <label>Survey Start Date</label>
-                <input type="date" id="surveyDate" required>
-            </div>
-            <div class="form-group">
-                <label>Approval By</label>
-                <select id="approvalBy" required>
-                    <option value="" disabled selected>Select Approver</option>
-                    <option value="Ishan Sharma">Ishan Sharma</option>
-                    <option value="Manager B">Manager B</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>POC Name</label>
-                <input type="text" id="pocName" placeholder="Enter POC Name" required>
-            </div>
-            <div class="form-group">
-                <label>POC Email</label>
-                <input type="email" id="pocEmail" placeholder="Enter POC Email" required>
-            </div>
-            <div class="form-group">
-                <label>Overall Budget</label>
-                <input type="number" id="overallBudget" placeholder="Enter Amount" required min="1">
-            </div>
+            <div class="form-group"><label>Name of the Survey</label><input type="text" id="surveyName" placeholder="e.g. Aspirations Survey" required></div>
+            <div class="form-group"><label>Survey Start Date</label><input type="date" id="surveyDate" required></div>
+            <div class="form-group"><label>Approval By</label><select id="approvalBy" required><option value="" disabled selected>Select Approver</option><option value="Ishan Sharma">Ishan Sharma</option><option value="Manager B">Manager B</option></select></div>
+            <div class="form-group"><label>POC Name</label><input type="text" id="pocName" placeholder="Enter POC Name" required></div>
+            <div class="form-group"><label>POC Email</label><input type="email" id="pocEmail" placeholder="Enter POC Email" required></div>
+            <div class="form-group"><label>Overall Budget</label><input type="number" id="overallBudget" placeholder="Enter Amount" required min="1"></div>
         </div>
 
         <div class="section-title">Location Targeting</div>
         <div class="form-grid">
             <div class="full-width"><small style="color: #ef4444; font-weight: bold;">* Fill Only 1: Either Location OR Pincodes</small></div>
-            <div class="form-group">
-                <label>Number of Target Locations</label>
-                <input type="number" id="locCount" value="1" required min="1">
-            </div>
-            <div class="form-group">
-                <label>Name of Location(s)</label>
-                <input type="text" id="locName" placeholder="e.g. Hyderabad, Khammam">
-                <small style="color:#666; font-size:11px;">Separate with commas</small>
-            </div>
-            <div class="form-group full-width">
-                <label>Pincodes</label>
-                <input type="text" id="locPin" placeholder="e.g. 500081, 500032">
-            </div>
+            <div class="form-group"><label>Number of Target Locations</label><input type="number" id="locCount" value="1" required min="1"></div>
+            <div class="form-group"><label>Name of Location(s)</label><input type="text" id="locName" placeholder="e.g. Hyderabad, Khammam"><small style="color:#666; font-size:11px;">Separate with commas</small></div>
+            <div class="form-group full-width"><label>Pincodes</label><input type="text" id="locPin" placeholder="e.g. 500081, 500032"></div>
         </div>
 
         <div class="section-title">Demographics</div>
         <div class="form-grid">
             <div class="form-group full-width">
                 <label>Specific Age Targeting?</label>
-                <select id="ageTargetSelect" onchange="toggleAgeInput()">
-                    <option value="No" selected>No (General 18-65+)</option>
-                    <option value="Yes">Yes</option>
-                </select>
-                <div id="customAgeInput" class="custom-wrapper">
-                    <label style="color: #4F46E5;">Enter Custom Age Ranges</label>
-                    <input type="text" id="customAgeText" placeholder="e.g. 18-24, 35-60">
-                </div>
+                <select id="ageTargetSelect" onchange="toggleAgeInput()"><option value="No" selected>No (General 18-65+)</option><option value="Yes">Yes</option></select>
+                <div id="customAgeInput" class="custom-wrapper"><label style="color: #4F46E5;">Enter Custom Age Ranges</label><input type="text" id="customAgeText" placeholder="e.g. 18-24, 35-60"></div>
             </div>
-
             <div class="form-group full-width">
                 <label>Gender Targeting</label>
-                <select id="genderSelect" onchange="toggleGenderInputs()">
-                    <option value="All" selected>All Genders</option>
-                    <option value="Male">Male Only</option>
-                    <option value="Female">Female Only</option>
-                </select>
+                <select id="genderSelect" onchange="toggleGenderInputs()"><option value="All" selected>All Genders</option><option value="Male">Male Only</option><option value="Female">Female Only</option></select>
             </div>
-
-            <div class="form-group" id="maleTargetWrapper">
-                <label>Male Target Number</label>
-                <input type="number" id="maleTargetNum" placeholder="e.g. 5000">
-            </div>
-            <div class="form-group" id="femaleTargetWrapper">
-                <label>Female Target Number</label>
-                <input type="number" id="femaleTargetNum" placeholder="e.g. 5000">
-            </div>
-
+            <div class="form-group" id="maleTargetWrapper"><label>Male Target Number</label><input type="number" id="maleTargetNum" placeholder="e.g. 5000"></div>
+            <div class="form-group" id="femaleTargetWrapper"><label>Female Target Number</label><input type="number" id="femaleTargetNum" placeholder="e.g. 5000"></div>
             <div class="form-group full-width">
                 <label>Targeting Language (Max 3)</label>
                 <div class="multiselect">
-                    <div class="selectBox" onclick="showCheckboxes()">
-                        <select><option id="languageDisplayText">Select Languages</option></select>
-                        <div class="overSelect"></div>
-                    </div>
+                    <div class="selectBox" onclick="showCheckboxes()"><select><option id="languageDisplayText">Select Languages</option></select><div class="overSelect"></div></div>
                     <div id="checkboxes">
                         <label><input type="checkbox" value="Telugu" onchange="updateLanguageDisplay(this)"> Telugu</label>
                         <label><input type="checkbox" value="Hindi" onchange="updateLanguageDisplay(this)"> Hindi</label>
@@ -170,12 +113,7 @@
             <table class="creative-table">
                 <thead><tr><th style="width:50px;">S.No</th><th>Creative Link Name</th><th>Image URL</th><th style="width:60px;">Action</th></tr></thead>
                 <tbody id="creativeBody">
-                    <tr>
-                        <td>1</td>
-                        <td><input type="text" class="c-name" placeholder="Enter Name"></td>
-                        <td><input type="text" class="c-url" placeholder="Paste URL here"></td>
-                        <td></td>
-                    </tr>
+                    <tr><td>1</td><td><input type="text" class="c-name" placeholder="Enter Name"></td><td><input type="text" class="c-url" placeholder="Paste URL here"></td><td></td></tr>
                 </tbody>
             </table>
             <button type="button" class="btn-add-creative" onclick="addCreativeRow()">+ Add Creative View</button>
@@ -189,17 +127,23 @@
 </div>
 
 <script>
-    // Set User Email in UI
+    // --- INIT ---
     document.getElementById('userDisplay').innerText = 'Logged in as: ' + localStorage.getItem('userEmail');
-
-    // --- PASTE ALL THE EXISTING JS FUNCTIONS HERE (Same as previous version) ---
-    // (I am including the core validation logic again for completeness)
     
     window.onload = function() {
-        toggleGenderInputs(); 
-        loadDraft(); 
+        // 1. Set Defaults
+        toggleGenderInputs();
+        toggleAgeInput(); // Check default state
+        
+        // 2. Load Draft
+        try {
+            loadDraft();
+        } catch (e) {
+            console.error("Draft Load Error:", e);
+        }
     };
 
+    // --- UI LOGIC ---
     function toggleGenderInputs() {
         const val = document.getElementById("genderSelect").value;
         const maleDiv = document.getElementById("maleTargetWrapper");
@@ -208,7 +152,13 @@
         else if (val === "Male") { maleDiv.style.display = "block"; femaleDiv.style.display = "none"; }
         else if (val === "Female") { maleDiv.style.display = "none"; femaleDiv.style.display = "block"; }
     }
+    
+    function toggleAgeInput() {
+        const val = document.getElementById("ageTargetSelect").value;
+        document.getElementById("customAgeInput").style.display = (val === "Yes") ? "block" : "none";
+    }
 
+    // --- CREATIVE TABLE LOGIC ---
     function addCreativeRow() {
         const tbody = document.getElementById("creativeBody");
         if (tbody.children.length >= 3) { alert("Maximum 3 creative views allowed."); return; }
@@ -223,13 +173,9 @@
         renumberCreatives();
     }
     function deleteCreativeRow(btn) { btn.closest('tr').remove(); renumberCreatives(); }
-    function renumberCreatives() {
-        document.querySelectorAll('#creativeBody tr').forEach((row, i) => row.cells[0].innerText = i + 1);
-    }
-    function toggleAgeInput() {
-        const val = document.getElementById("ageTargetSelect").value;
-        document.getElementById("customAgeInput").style.display = (val === "Yes") ? "block" : "none";
-    }
+    function renumberCreatives() { document.querySelectorAll('#creativeBody tr').forEach((row, i) => row.cells[0].innerText = i + 1); }
+
+    // --- LANGUAGES ---
     var expanded = false;
     function showCheckboxes() {
         const checkboxes = document.getElementById("checkboxes");
@@ -243,56 +189,8 @@
         if (selected.length > 3) { alert("Max 3 languages allowed."); checkbox.checked = false; return; }
         document.getElementById("languageDisplayText").textContent = selected.length ? selected.join(', ') : "Select Languages";
     }
-    
-    function validateEmail(email) {
-        return String(email).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    }
 
-    function validatePage1() {
-        let isValid = true;
-        let firstError = null;
-        const markError = (el) => { el.classList.add('error'); if (!firstError) firstError = el; isValid = false; };
-        const clearError = (el) => el.classList.remove('error');
-
-        ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount"].forEach(id => {
-            const el = document.getElementById(id);
-            if (!el.value.trim()) markError(el); else clearError(el);
-        });
-
-        const emailEl = document.getElementById("pocEmail");
-        if (emailEl.value.trim() && !validateEmail(emailEl.value)) { alert("Invalid Email"); markError(emailEl); }
-
-        const locName = document.getElementById("locName");
-        const locPin = document.getElementById("locPin");
-        if (!locName.value.trim() && !locPin.value.trim()) { markError(locName); markError(locPin); alert("Fill Location or Pincode"); } 
-        else { clearError(locName); clearError(locPin); }
-
-        if (document.getElementById("ageTargetSelect").value === "Yes") {
-            const ca = document.getElementById("customAgeText");
-            if (!ca.value.trim()) markError(ca); else clearError(ca);
-        }
-
-        const gVal = document.getElementById("genderSelect").value;
-        const mNum = document.getElementById("maleTargetNum");
-        const fNum = document.getElementById("femaleTargetNum");
-        if ((gVal === "All" || gVal === "Male") && !mNum.value.trim()) markError(mNum); else clearError(mNum);
-        if ((gVal === "All" || gVal === "Female") && !fNum.value.trim()) markError(fNum); else clearError(fNum);
-
-        let langs = [];
-        document.querySelectorAll('#checkboxes input:checked').forEach(cb => langs.push(cb.value));
-        if (langs.length === 0) { alert("Select a language"); isValid = false; }
-
-        document.querySelectorAll('#creativeBody tr').forEach(row => {
-            const name = row.querySelector('.c-name');
-            const url = row.querySelector('.c-url');
-            if(!name.value.trim()) markError(name); else clearError(name);
-            if(!url.value.trim()) markError(url); else clearError(url);
-        });
-
-        if (!isValid && firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return isValid;
-    }
-
+    // --- DRAFT LOGIC (UPDATED) ---
     function gatherFormData() {
         let creatives = [];
         document.querySelectorAll('#creativeBody tr').forEach(row => {
@@ -320,17 +218,109 @@
             creatives: creatives
         };
     }
-    function saveDraft() { localStorage.setItem('page1Draft', JSON.stringify(gatherFormData())); alert("Draft Saved"); }
-    function loadDraft() {
-        const saved = localStorage.getItem('page1Draft'); if(!saved) return;
-        const data = JSON.parse(saved);
-        // ... (Include restoration logic if needed, or user can re-fill) ...
-        // For brevity in this response, assume standard restoration logic from previous file
+
+    function saveDraft() {
+        try {
+            const data = gatherFormData();
+            localStorage.setItem('page1Draft', JSON.stringify(data));
+            alert("Draft saved successfully!");
+        } catch (e) {
+            alert("Could not save draft. Browser storage might be full or disabled.");
+        }
     }
+
+    function loadDraft() {
+        const saved = localStorage.getItem('page1Draft');
+        if (!saved) return;
+        
+        const data = JSON.parse(saved);
+        // Fill basic fields
+        ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount", "locName", "locPin", "customAge", "maleTargetNum", "femaleTargetNum"]
+            .forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+
+        // Update Budget field specifically to handle ID mismatch if any
+        if(data.budget) document.getElementById("overallBudget").value = data.budget;
+
+        // Triggers
+        if(data.ageTarget) { document.getElementById("ageTargetSelect").value = data.ageTarget; toggleAgeInput(); }
+        if(data.gender) { document.getElementById("genderSelect").value = data.gender; toggleGenderInputs(); }
+
+        // Languages
+        if (data.languages) {
+            const boxes = document.querySelectorAll('#checkboxes input');
+            let hasLangs = false;
+            boxes.forEach(cb => {
+                if(data.languages.includes(cb.value)) { cb.checked = true; hasLangs = true; }
+            });
+            if(hasLangs) updateLanguageDisplay({checked:true});
+        }
+
+        // Creatives (Wait for DOM update)
+        if (data.creatives && data.creatives.length > 0) {
+            const tbody = document.getElementById("creativeBody");
+            tbody.innerHTML = ''; 
+            data.creatives.forEach((c, index) => {
+                const row = `<tr>
+                    <td>${index+1}</td>
+                    <td><input type="text" class="c-name" value="${c.name}"></td>
+                    <td><input type="text" class="c-url" value="${c.url}"></td>
+                    <td>${index > 0 ? '<button type="button" class="btn-del-creative" onclick="deleteCreativeRow(this)">Del</button>' : ''}</td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
+        
+        console.log("Draft Loaded");
+    }
+
+    function validateEmail(email) {
+        return String(email).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+    }
+
     function goToPage2() {
-        if (!validatePage1()) return;
+        // ... VALIDATION LOGIC ...
+        let isValid = true;
+        let firstError = null;
+        const markError = (el) => { el.classList.add('error'); if (!firstError) firstError = el; isValid = false; };
+        const clearError = (el) => el.classList.remove('error');
+
+        ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount"].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) markError(el); else clearError(el);
+        });
+
+        const emailEl = document.getElementById("pocEmail");
+        if (emailEl.value.trim() && !validateEmail(emailEl.value)) { alert("Invalid Email"); markError(emailEl); }
+
+        const locName = document.getElementById("locName");
+        const locPin = document.getElementById("locPin");
+        if (!locName.value.trim() && !locPin.value.trim()) { markError(locName); markError(locPin); alert("Fill Location or Pincode"); } 
+        else { clearError(locName); clearError(locPin); }
+
+        if (document.getElementById("ageTargetSelect").value === "Yes") {
+            const ca = document.getElementById("customAgeText");
+            if (!ca.value.trim()) markError(ca); else clearError(ca);
+        }
+
+        let langs = [];
+        document.querySelectorAll('#checkboxes input:checked').forEach(cb => langs.push(cb.value));
+        if (langs.length === 0) { alert("Select a language"); isValid = false; }
+
+        document.querySelectorAll('#creativeBody tr').forEach(row => {
+            const name = row.querySelector('.c-name');
+            const url = row.querySelector('.c-url');
+            if(!name.value.trim()) markError(name); else clearError(name);
+            if(!url.value.trim()) markError(url); else clearError(url);
+        });
+
+        if (!isValid) {
+            if(firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
         const data = gatherFormData();
         localStorage.setItem('surveyData', JSON.stringify(data));
+        localStorage.setItem('page1Draft', JSON.stringify(data)); // Auto-save on next
         window.location.href = 'page2.html';
     }
 </script>
