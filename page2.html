@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --primary: #4F46E5; --primary-hover: #4338ca; --secondary: #eef2ff; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
@@ -31,9 +32,12 @@
         textarea { white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; resize: none; overflow: hidden; min-height: 40px; font-family: inherit; line-height: 1.5; display: block; }
         textarea:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         
+        /* Validation Error Style */
+        .error { border: 1px solid var(--danger) !important; background-color: #fff5f5 !important; }
+
         .options-container { background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px dashed var(--border); width: 100%; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
-        .options-grid div { min-width: 0; }
+        .options-grid div { min-width: 0; display: flex; gap: 5px;}
         
         .btn { padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
         .btn-add-opt { background: var(--secondary); color: var(--primary); margin-top: 8px; width: 100%; }
@@ -55,7 +59,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainContainer">
     <div class="header">
         <h1>Survey Questions & Options</h1>
         <div class="step-indicator">Page 2 of 2</div>
@@ -63,7 +67,7 @@
 
     <form id="campaignForm">
         <div id="dynamic-content"></div>
-        <div class="form-footer">
+        <div class="form-footer" data-html2canvas-ignore="true">
             <button type="button" class="back-btn" onclick="history.back()">&larr; Back to Setup</button>
             <div class="group-right">
                 <button type="button" class="draft-btn" onclick="savePage2Draft()">Save as Draft</button>
@@ -73,11 +77,17 @@
     </form>
 </div>
 
+<div id="pdf-template" style="display:none; padding: 20px; font-family: sans-serif;">
+    <h1 style="border-bottom: 2px solid #333; padding-bottom: 10px;">Campaign Request Summary</h1>
+    <div id="pdf-page1"></div>
+    <div id="pdf-page2"></div>
+</div>
+
 <script>
     // ------------------------------------------------------------------
     // 1. CONFIGURATION
     // ------------------------------------------------------------------
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKIgR6BZf5XHmFtGdWnnzFr99V5U_6l-LU3kHB5ONAiVVyND6EjMJDe2dftAWjgfNI/exec'; // <--- PASTE YOUR URL HERE
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKIgR6BZf5XHmFtGdWnnzFr99V5U_6l-LU3kHB5ONAiVVyND6EjMJDe2dftAWjgfNI/exec'; 
 
     const storedData = localStorage.getItem('surveyData');
     let surveyData = {};
@@ -164,13 +174,13 @@
         card.innerHTML = `
             <div class="q-header">
                 <span class="q-number">Q${qIndex}</span>
-                ${qIndex > 1 ? `<button type="button" class="btn btn-remove" onclick="this.closest('.question-card').remove()">Remove</button>` : ''}
+                <button type="button" class="btn btn-remove" onclick="removeQuestion(this)">Remove</button>
             </div>
             <div class="form-row">
                 <textarea class="input-q-text" placeholder="Type Question Here..." rows="1">${textVal}</textarea>
             </div>
             <div class="options-container">
-                <label>Options</label>
+                <label>Options (Empty options not allowed)</label>
                 <div class="options-grid" id="${lang}_q${qIndex}_options"></div>
                 <button type="button" class="btn btn-add-opt" onclick="addOption('${lang}', ${qIndex})">+ Add Option</button>
             </div>
@@ -186,6 +196,10 @@
             addOption(lang, qIndex);
         }
     }
+    
+    function removeQuestion(btn) {
+        btn.closest('.question-card').remove();
+    }
 
     function addOption(lang, qIndex, val = "") {
         const optContainer = document.getElementById(`${lang}_q${qIndex}_options`);
@@ -193,73 +207,205 @@
         if (optIndex > MAX_OPTIONS) { alert("Max options reached."); return; }
 
         const optDiv = document.createElement('div');
-        optDiv.innerHTML = `<textarea class="input-opt" placeholder="Option ${optIndex}" rows="1">${val}</textarea>`;
+        optDiv.innerHTML = `
+            <textarea class="input-opt" placeholder="Option ${optIndex}" rows="1">${val}</textarea>
+            <button type="button" class="btn btn-remove" onclick="this.parentNode.remove()">X</button>
+        `;
         optContainer.appendChild(optDiv);
         const newTa = optDiv.querySelector('textarea');
         autoResize(newTa);
     }
 
     // ------------------------------------------------------------------
-    // 3. SCRAPE & SAVE
+    // 3. VALIDATE & SCRAPE
     // ------------------------------------------------------------------
-    function scrapePage2() {
+    
+    function validateAndScrape() {
+        let isValid = true;
+        let firstError = null;
         let data = {};
+
+        // Remove old error highlights
+        document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
         selectedLanguages.forEach(lang => {
             const section = document.getElementById(`section-${lang}`);
-            const headline = section.querySelector('.input-headline').value;
-            const desc = section.querySelector('.input-desc').value;
+            const headlineInput = section.querySelector('.input-headline');
+            const descInput = section.querySelector('.input-desc');
+
+            if (!headlineInput.value.trim()) { 
+                headlineInput.classList.add('error'); isValid = false; if(!firstError) firstError=headlineInput; 
+            }
+            if (!descInput.value.trim()) { 
+                descInput.classList.add('error'); isValid = false; if(!firstError) firstError=descInput;
+            }
             
             let questions = [];
             const cards = section.querySelectorAll('.question-card');
+            
             cards.forEach(card => {
-                const qText = card.querySelector('.input-q-text').value;
+                const qTextInput = card.querySelector('.input-q-text');
+                if(!qTextInput.value.trim()) {
+                    qTextInput.classList.add('error'); isValid = false; if(!firstError) firstError=qTextInput;
+                }
+
                 let opts = [];
                 const optInputs = card.querySelectorAll('.input-opt');
-                optInputs.forEach(opt => { if(opt.value.trim() !== "") opts.push(opt.value); });
-                questions.push({ text: qText, options: opts });
+                
+                if(optInputs.length === 0) {
+                    // Must have at least 1 option or delete the question
+                    isValid = false;
+                    alert(`Question "${qTextInput.value}" needs options or should be removed.`);
+                }
+
+                optInputs.forEach(opt => { 
+                    if(opt.value.trim() === "") {
+                        opt.classList.add('error');
+                        isValid = false;
+                        if(!firstError) firstError = opt;
+                    }
+                    opts.push(opt.value); 
+                });
+                questions.push({ text: qTextInput.value, options: opts });
             });
-            data[lang] = { headline: headline, desc: desc, questions: questions };
+            data[lang] = { headline: headlineInput.value, desc: descInput.value, questions: questions };
         });
+
+        if (!isValid) {
+            alert("All fields must be filled! Please delete any unused options or questions.");
+            if(firstError) firstError.scrollIntoView({behavior: "smooth", block: "center"});
+            return null;
+        }
+
         return data;
     }
 
     function savePage2Draft() {
-        const data = scrapePage2();
+        // Scrape without strict validation for drafts
+        const data = {}; 
+        selectedLanguages.forEach(lang => {
+            const section = document.getElementById(`section-${lang}`);
+            const headline = section.querySelector('.input-headline').value;
+            const desc = section.querySelector('.input-desc').value;
+            let questions = [];
+            section.querySelectorAll('.question-card').forEach(card => {
+                questions.push({ 
+                    text: card.querySelector('.input-q-text').value, 
+                    options: Array.from(card.querySelectorAll('.input-opt')).map(o=>o.value) 
+                });
+            });
+            data[lang] = { headline, desc, questions };
+        });
         localStorage.setItem('page2Draft', JSON.stringify(data));
         alert("Draft saved!");
     }
 
     // ------------------------------------------------------------------
-    // 4. SUBMIT TO GOOGLE SHEETS & CLEAR FORM
+    // 4. GENERATE PDF FUNCTION
+    // ------------------------------------------------------------------
+    function generatePDF(page1, page2) {
+        const p1Div = document.getElementById('pdf-page1');
+        const p2Div = document.getElementById('pdf-page2');
+        
+        // Build Page 1 HTML
+        let creativesHtml = '<ul>';
+        page1.creatives.forEach(c => creativesHtml += `<li><b>${c.name}</b>: ${c.url}</li>`);
+        creativesHtml += '</ul>';
+
+        p1Div.innerHTML = `
+            <h3>General Details</h3>
+            <p><b>Survey Name:</b> ${page1.surveyName}</p>
+            <p><b>POC:</b> ${page1.pocName} (${page1.pocEmail})</p>
+            <p><b>Date:</b> ${page1.surveyDate}</p>
+            <p><b>Budget:</b> ${page1.budget}</p>
+            <p><b>Targeting:</b> ${page1.locName ? page1.locName : page1.locPin}</p>
+            <p><b>Creatives:</b></p>
+            ${creativesHtml}
+            <hr>
+        `;
+
+        // Build Page 2 HTML
+        let p2Html = '<h3>Questions & Content</h3>';
+        for (const [lang, content] of Object.entries(page2)) {
+            p2Html += `<div style="margin-bottom:20px; border:1px solid #ccc; padding:10px;">
+                <h4 style="margin-top:0;">${lang}</h4>
+                <p><b>Headline:</b> ${content.headline}</p>
+                <p><b>Description:</b> ${content.desc}</p>
+                <ul>`;
+            content.questions.forEach((q, i) => {
+                p2Html += `<li><b>Q${i+1}:</b> ${q.text}<br>Options: ${q.options.join(', ')}</li>`;
+            });
+            p2Html += `</ul></div>`;
+        }
+        p2Div.innerHTML = p2Html;
+
+        const element = document.getElementById('pdf-template');
+        element.style.display = 'block'; // Make visible for rendering
+        
+        const opt = {
+            margin:       0.5,
+            filename:     'Campaign_Request_Summary.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        return html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none'; // Hide again
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // 5. SUBMIT TO GOOGLE SHEETS
     // ------------------------------------------------------------------
     document.getElementById('campaignForm').addEventListener('submit', function(e) {
         e.preventDefault();
+
+        // 1. Validate
+        const page2Data = validateAndScrape();
+        if (!page2Data) return; // Validation failed
+
+        // 2. Confirm
+        if (!confirm("You won't be able to edit again.\n\nAre you sure you want to submit?")) {
+            return;
+        }
+
         const btn = document.querySelector('.submit-btn');
         const oldText = btn.innerText;
-        btn.innerText = "Sending..."; btn.disabled = true;
+        btn.innerText = "Processing..."; 
+        btn.disabled = true;
 
-        const page2Data = scrapePage2(); 
         const finalPayload = { general: surveyData, content: page2Data };
 
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(finalPayload)
-        }).then(() => {
-            alert("Success! Campaign Request Sent.");
+        // 3. Generate PDF & Then Submit
+        generatePDF(surveyData, page2Data).then(() => {
             
-            // --- CLEAR EVERYTHING ---
-            localStorage.removeItem('page1Draft');
-            localStorage.removeItem('page2Draft');
-            localStorage.removeItem('surveyData');
-            
-            // --- REDIRECT TO HOME ---
-            window.location.href = 'index.html'; 
-            
+            // 4. Send to Google Sheet
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(finalPayload)
+            }).then(() => {
+                alert("Success! PDF Downloaded & Campaign Request Sent.");
+                
+                // --- CLEAR EVERYTHING ---
+                localStorage.removeItem('page1Draft');
+                localStorage.removeItem('page2Draft');
+                localStorage.removeItem('surveyData');
+                
+                // --- REDIRECT TO HOME ---
+                window.location.href = 'index.html'; 
+                
+            }).catch(err => {
+                console.error(err);
+                alert("Error sending to Google Sheet (but PDF should be saved).");
+                btn.innerText = oldText; btn.disabled = false;
+            });
+
         }).catch(err => {
-            console.error(err);
-            alert("Error sending to Google Sheet.");
+            console.error("PDF Error", err);
+            alert("Error generating PDF.");
             btn.innerText = oldText; btn.disabled = false;
         });
     });
