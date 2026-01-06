@@ -219,7 +219,6 @@
     // ------------------------------------------------------------------
     // 3. VALIDATE & SCRAPE
     // ------------------------------------------------------------------
-    
     function validateAndScrape() {
         let isValid = true;
         let firstError = null;
@@ -253,7 +252,6 @@
                 const optInputs = card.querySelectorAll('.input-opt');
                 
                 if(optInputs.length === 0) {
-                    // Must have at least 1 option or delete the question
                     isValid = false;
                     alert(`Question "${qTextInput.value}" needs options or should be removed.`);
                 }
@@ -281,7 +279,6 @@
     }
 
     function savePage2Draft() {
-        // Scrape without strict validation for drafts
         const data = {}; 
         selectedLanguages.forEach(lang => {
             const section = document.getElementById(`section-${lang}`);
@@ -307,10 +304,12 @@
         const p1Div = document.getElementById('pdf-page1');
         const p2Div = document.getElementById('pdf-page2');
         
-        // Build Page 1 HTML
         let creativesHtml = '<ul>';
         page1.creatives.forEach(c => creativesHtml += `<li><b>${c.name}</b>: ${c.url}</li>`);
         creativesHtml += '</ul>';
+
+        // Prepare Age String for PDF
+        let ageStr = page1.ageTarget === "Yes" ? page1.customAge : "18-65+ (General)";
 
         p1Div.innerHTML = `
             <h3>General Details</h3>
@@ -319,12 +318,13 @@
             <p><b>Date:</b> ${page1.surveyDate}</p>
             <p><b>Budget:</b> ${page1.budget}</p>
             <p><b>Targeting:</b> ${page1.locName ? page1.locName : page1.locPin}</p>
+            <p><b>Languages:</b> ${page1.languages.join(', ')}</p>
+            <p><b>Demographics:</b> Age: ${ageStr}, Gender: ${page1.gender}</p>
             <p><b>Creatives:</b></p>
             ${creativesHtml}
             <hr>
         `;
 
-        // Build Page 2 HTML
         let p2Html = '<h3>Questions & Content</h3>';
         for (const [lang, content] of Object.entries(page2)) {
             p2Html += `<div style="margin-bottom:20px; border:1px solid #ccc; padding:10px;">
@@ -340,7 +340,7 @@
         p2Div.innerHTML = p2Html;
 
         const element = document.getElementById('pdf-template');
-        element.style.display = 'block'; // Make visible for rendering
+        element.style.display = 'block'; 
         
         const opt = {
             margin:       0.5,
@@ -351,21 +351,21 @@
         };
 
         return html2pdf().set(opt).from(element).save().then(() => {
-            element.style.display = 'none'; // Hide again
+            element.style.display = 'none'; 
         });
     }
 
     // ------------------------------------------------------------------
-    // 5. SUBMIT TO GOOGLE SHEETS
+    // 5. SUBMIT & FORMAT DATA FOR GOOGLE SHEET
     // ------------------------------------------------------------------
     document.getElementById('campaignForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // 1. Validate
+        // 1. Validate Page 2
         const page2Data = validateAndScrape();
-        if (!page2Data) return; // Validation failed
+        if (!page2Data) return; 
 
-        // 2. Confirm
+        // 2. Confirmation
         if (!confirm("You won't be able to edit again.\n\nAre you sure you want to submit?")) {
             return;
         }
@@ -375,31 +375,65 @@
         btn.innerText = "Processing..."; 
         btn.disabled = true;
 
-        const finalPayload = { general: surveyData, content: page2Data };
+        // 3. Prepare Data Strings (Fixing Missing Demographics)
+        
+        // --- A. Demographics String (Age + Gender) for Column 8 ---
+        let demoStr = "";
+        
+        // Add Age
+        if (surveyData.ageTarget === "Yes") {
+            demoStr += `Age: ${surveyData.customAge} | `;
+        } else {
+            demoStr += `Age: 18-65+ (General) | `;
+        }
+        
+        // Add Gender
+        if (surveyData.gender === "All") {
+            demoStr += `Gender: All (M: ${surveyData.maleCount}, F: ${surveyData.femaleCount})`;
+        } else if (surveyData.gender === "Male") {
+            demoStr += `Gender: Male (${surveyData.maleCount})`;
+        } else if (surveyData.gender === "Female") {
+            demoStr += `Gender: Female (${surveyData.femaleCount})`;
+        }
 
-        // 3. Generate PDF & Then Submit
+        // --- B. Master JSON (Page 1 + Page 2) for Column 9 ---
+        const masterJson = {
+            page1_details: surveyData,
+            page2_content: page2Data
+        };
+
+        const payload = {
+            surveyName: surveyData.surveyName,
+            pocName: surveyData.pocName,
+            pocEmail: surveyData.pocEmail,
+            budget: surveyData.budget,
+            locations: surveyData.locName || surveyData.locPin, 
+            languages: surveyData.languages.join(', '),
+            genderInfo: demoStr,  // Sends Age + Gender to the "Gender Info" column
+            jsonData: JSON.stringify(masterJson) // Sends FULL data to the JSON column
+        };
+
+        // 4. Generate PDF & Submit
         generatePDF(surveyData, page2Data).then(() => {
             
-            // 4. Send to Google Sheet
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(finalPayload)
+                body: JSON.stringify(payload)
             }).then(() => {
-                alert("Success! PDF Downloaded & Campaign Request Sent.");
+                alert("Success! PDF Downloaded & Data Sent to Sheets.");
                 
-                // --- CLEAR EVERYTHING ---
+                // Clear Data
                 localStorage.removeItem('page1Draft');
                 localStorage.removeItem('page2Draft');
                 localStorage.removeItem('surveyData');
                 
-                // --- REDIRECT TO HOME ---
                 window.location.href = 'index.html'; 
                 
             }).catch(err => {
                 console.error(err);
-                alert("Error sending to Google Sheet (but PDF should be saved).");
+                alert("Error sending to Google Sheet.");
                 btn.innerText = oldText; btn.disabled = false;
             });
 
