@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
-        if (!localStorage.getItem('authValid') || !localStorage.getItem('userEmail')) {
-            window.location.href = 'login.html';
-        }
-    </script>
     <style>
-        /* (KEEP ALL EXISTING CSS) */
         :root { --primary: #4F46E5; --primary-hover: #4338ca; --secondary: #eef2ff; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
@@ -19,29 +13,43 @@
         .header { background: var(--primary); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .header h1 { margin: 0; font-size: 24px; font-weight: 600; }
         .step-indicator { background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; font-size: 14px; }
+        
         #dynamic-content { display: grid; gap: 20px; align-items: start; }
+        
         .language-section { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); display: flex; flex-direction: column; min-width: 0; }
         .lang-title { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
         .head-desc-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        
         .question-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.02); max-width: 100%; }
         .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .q-number { font-weight: bold; color: var(--text-dark); font-size: 14px; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;}
         .form-row { margin-bottom: 10px; width: 100%; }
         label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--text-light); }
+        
         input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 14px; color: var(--text-dark); }
+        textarea { white-space: pre-wrap; resize: none; overflow: hidden; min-height: 40px; font-family: inherit; line-height: 1.5; display: block; }
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1); }
         .error { border: 1px solid var(--danger) !important; background-color: #fff5f5 !important; }
+
         .options-container { background: #f9fafb; padding: 10px; border-radius: 6px; border: 1px dashed var(--border); width: 100%; }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 8px; width: 100%; }
         .options-grid div { min-width: 0; display: flex; gap: 5px;}
+        
         .btn { padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
         .btn-add-opt { background: var(--secondary); color: var(--primary); margin-top: 8px; width: 100%; }
+        .btn-add-opt:hover { background: #e0e7ff; }
         .btn-add-q { background: var(--primary); color: white; padding: 10px; font-size: 14px; width: 100%; margin-top: 10px; }
         .btn-remove { color: var(--danger); background: transparent; padding: 2px 6px; }
+        .btn-remove:hover { background: #fee2e2; border-radius: 4px; }
+        
         .form-footer { margin-top: 20px; padding: 20px; display: flex; justify-content: space-between; align-items: center; background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .group-right { display: flex; gap: 15px; }
         .submit-btn { background-color: #059669; color: white; border: none; padding: 12px 40px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .submit-btn:hover { background-color: #047857; }
         .back-btn { background-color: white; color: var(--text-dark); border: 1px solid var(--border); padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
         .draft-btn { background-color: #f3f4f6; color: var(--text-dark); border: 1px solid #d1d5db; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+
         @media (max-width: 768px) { #dynamic-content { grid-template-columns: 1fr !important; } }
     </style>
 </head>
@@ -52,6 +60,7 @@
         <h1>Survey Questions & Options</h1>
         <div class="step-indicator">Page 2 of 2</div>
     </div>
+
     <form id="campaignForm">
         <div id="dynamic-content"></div>
         <div class="form-footer" data-html2canvas-ignore="true">
@@ -65,7 +74,6 @@
 </div>
 
 <div id="pdf-template" style="display:none; padding: 40px; font-family: 'Helvetica', sans-serif; color: #333; width: 800px; margin: 0 auto; background: white;">
-    
     <div style="border-bottom: 2px solid #4F46E5; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
         <div>
             <h1 style="margin: 0; font-size: 24px; color: #4F46E5;">Campaign Request</h1>
@@ -114,116 +122,264 @@
     <div id="pdf-creatives" style="margin-bottom: 20px; font-size: 13px;"></div>
 
     <h3 style="background: #f3f4f6; padding: 8px; border-left: 4px solid #4F46E5; margin-bottom: 10px; font-size: 16px;">4. Content & Questions</h3>
-    <div id="pdf-page2-content">
-        </div>
+    <div id="pdf-page2-content"></div>
 </div>
-<script>
-    // URL OF YOUR APPS SCRIPT
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxjMJRpS3D54RK0kxwk6L8vv5O9ASrPa72AXS6exuXKMI6ahbEyNdYJJIt2VbW-lhGi/exec'; 
 
-    const storedData = localStorage.getItem('surveyData');
+<script>
+    // =======================================================
+    // 1. AUTHENTICATION & SECURITY CHECK
+    // =======================================================
+    const SCRIPT_URL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE'; // <--- PASTE YOUR URL HERE
+
     const userEmail = localStorage.getItem('userEmail');
+
+    // 1. Local Auth Check (Immediate)
+    if (!localStorage.getItem('authValid') || !userEmail) {
+        window.location.href = 'login.html';
+    }
+
+    // 2. Server Status Check (On Load)
+    window.onload = function() {
+        // Run Security Check
+        fetch(SCRIPT_URL, {
+            method: 'POST',
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "checkStatus", email: userEmail })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (!data.allowed) {
+                alert("Access Denied: " + data.message);
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        })
+        .catch(err => console.log("Security check failed to connect."));
+
+        // Initialize UI
+        initPage2();
+    };
+
+    // =======================================================
+    // 2. DATA INITIALIZATION
+    // =======================================================
     let surveyData = {};
-    if (storedData) { surveyData = JSON.parse(storedData); } else { alert("No data found from Page 1."); }
-    
-    const selectedLanguages = surveyData.languages || ['Telugu'];
     const MAX_QUESTIONS = 10;
     const MAX_OPTIONS = 10;
     const container = document.getElementById('dynamic-content');
+    let selectedLanguages = [];
 
-    // UI Builders (Same as before)
-    container.style.gridTemplateColumns = `repeat(${selectedLanguages.length}, 1fr)`;
-    const p2Draft = localStorage.getItem('page2Draft');
-    const parsedDraft = p2Draft ? JSON.parse(p2Draft) : null;
+    function initPage2() {
+        const storedData = localStorage.getItem('surveyData');
+        if (storedData) {
+            surveyData = JSON.parse(storedData);
+        } else {
+            alert("No data found from Page 1.");
+            return;
+        }
 
-    selectedLanguages.forEach(lang => {
-        const draftForLang = parsedDraft ? parsedDraft[lang] : null;
-        createLanguageSection(lang, draftForLang);
+        selectedLanguages = surveyData.languages || ['Telugu'];
+        container.style.gridTemplateColumns = `repeat(${selectedLanguages.length}, 1fr)`;
+
+        // Check for Draft
+        const p2Draft = localStorage.getItem('page2Draft');
+        const parsedDraft = p2Draft ? JSON.parse(p2Draft) : null;
+
+        selectedLanguages.forEach(lang => {
+            const draftForLang = parsedDraft ? parsedDraft[lang] : null;
+            createLanguageSection(lang, draftForLang);
+        });
+    }
+
+    function autoResize(elem) {
+        elem.style.height = 'auto';
+        elem.style.height = elem.scrollHeight + 'px';
+    }
+    document.addEventListener('input', function (e) {
+        if (e.target.tagName.toLowerCase() === 'textarea') autoResize(e.target);
     });
 
+    // =======================================================
+    // 3. UI BUILDERS
+    // =======================================================
     function createLanguageSection(lang, draftData) {
         const section = document.createElement('div');
         section.className = 'language-section';
         section.id = `section-${lang}`;
+
         const headVal = draftData ? draftData.headline : '';
         const descVal = draftData ? draftData.desc : '';
+
         section.innerHTML = `
             <div class="lang-title">${lang} Language</div>
             <div class="head-desc-box">
-                <div class="form-row"><label>Post Headline</label><input type="text" class="input-headline" value="${headVal}"></div>
-                <div class="form-row"><label>Post Copy Description</label><textarea class="input-desc" rows="2">${descVal}</textarea></div>
+                <div class="form-row">
+                    <label>Post Headline</label>
+                    <input type="text" class="input-headline" placeholder="Headline for ${lang}" value="${headVal}">
+                </div>
+                <div class="form-row">
+                    <label>Post Copy Description</label>
+                    <textarea class="input-desc" placeholder="Description for ${lang}" rows="2">${descVal}</textarea>
+                </div>
             </div>
             <div id="q-container-${lang}"></div>
         `;
+
         const addQBtn = document.createElement('button');
-        addQBtn.type = "button"; addQBtn.className = "btn btn-add-q"; addQBtn.innerText = `+ Add Question`; addQBtn.onclick = () => addQuestion(lang);
+        addQBtn.type = "button";
+        addQBtn.className = "btn btn-add-q";
+        addQBtn.innerText = `+ Add Question`;
+        addQBtn.onclick = () => addQuestion(lang);
         section.appendChild(addQBtn);
+
         container.appendChild(section);
-        if (draftData && draftData.questions) { draftData.questions.forEach(q => addQuestion(lang, q.text, q.options)); }
-        else { addQuestion(lang); }
+
+        if (draftData && draftData.questions && draftData.questions.length > 0) {
+            draftData.questions.forEach(q => {
+                addQuestion(lang, q.text, q.options);
+            });
+        } else {
+            addQuestion(lang);
+        }
     }
 
     function addQuestion(lang, textVal = "", optsVal = []) {
         const qContainer = document.getElementById(`q-container-${lang}`);
         const qIndex = qContainer.children.length + 1;
         if (qIndex > MAX_QUESTIONS) { alert("Max questions reached."); return; }
-        const card = document.createElement('div'); card.className = 'question-card';
+
+        const card = document.createElement('div');
+        card.className = 'question-card';
         card.innerHTML = `
-            <div class="q-header"><span class="q-number">Q${qIndex}</span><button type="button" class="btn btn-remove" onclick="this.closest('.question-card').remove()">Remove</button></div>
-            <div class="form-row"><textarea class="input-q-text" placeholder="Type Question..." rows="1">${textVal}</textarea></div>
-            <div class="options-container"><label>Options</label><div class="options-grid" id="${lang}_q${qIndex}_options"></div><button type="button" class="btn btn-add-opt" onclick="addOption('${lang}', ${qIndex})">+ Add Option</button></div>
+            <div class="q-header">
+                <span class="q-number">Q${qIndex}</span>
+                <button type="button" class="btn btn-remove" onclick="removeQuestion(this)">Remove</button>
+            </div>
+            <div class="form-row">
+                <textarea class="input-q-text" placeholder="Type Question Here..." rows="1">${textVal}</textarea>
+            </div>
+            <div class="options-container">
+                <label>Options (Empty options not allowed)</label>
+                <div class="options-grid" id="${lang}_q${qIndex}_options"></div>
+                <button type="button" class="btn btn-add-opt" onclick="addOption('${lang}', ${qIndex})">+ Add Option</button>
+            </div>
         `;
         qContainer.appendChild(card);
-        if (optsVal.length > 0) optsVal.forEach(opt => addOption(lang, qIndex, opt));
-        else { addOption(lang, qIndex); addOption(lang, qIndex); }
+        const newTa = card.querySelector('.input-q-text');
+        autoResize(newTa);
+
+        if (optsVal.length > 0) {
+            optsVal.forEach(opt => addOption(lang, qIndex, opt));
+        } else {
+            addOption(lang, qIndex);
+            addOption(lang, qIndex);
+        }
     }
+
+    function removeQuestion(btn) {
+        btn.closest('.question-card').remove();
+    }
+
     function addOption(lang, qIndex, val = "") {
         const optContainer = document.getElementById(`${lang}_q${qIndex}_options`);
         const optIndex = optContainer.children.length + 1;
-        if (optIndex > MAX_OPTIONS) { alert("Max options."); return; }
+        if (optIndex > MAX_OPTIONS) { alert("Max options reached."); return; }
+
         const optDiv = document.createElement('div');
-        optDiv.innerHTML = `<textarea class="input-opt" rows="1">${val}</textarea><button type="button" class="btn btn-remove" onclick="this.parentNode.remove()">X</button>`;
+        optDiv.innerHTML = `
+            <textarea class="input-opt" placeholder="Option ${optIndex}" rows="1">${val}</textarea>
+            <button type="button" class="btn btn-remove" onclick="this.parentNode.remove()">X</button>
+        `;
         optContainer.appendChild(optDiv);
+        const newTa = optDiv.querySelector('textarea');
+        autoResize(newTa);
     }
 
-    // --- LOGIC: Validate & Scrape ---
+    // =======================================================
+    // 4. VALIDATION & SCRAPING
+    // =======================================================
     function validateAndScrape() {
         let isValid = true;
         let firstError = null;
         let data = {};
+
         document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 
         selectedLanguages.forEach(lang => {
             const section = document.getElementById(`section-${lang}`);
-            const h = section.querySelector('.input-headline');
-            const d = section.querySelector('.input-desc');
-            if (!h.value.trim()) { h.classList.add('error'); isValid = false; if(!firstError) firstError=h; }
-            if (!d.value.trim()) { d.classList.add('error'); isValid = false; if(!firstError) firstError=d; }
+            const headlineInput = section.querySelector('.input-headline');
+            const descInput = section.querySelector('.input-desc');
+
+            if (!headlineInput.value.trim()) { 
+                headlineInput.classList.add('error'); isValid = false; if(!firstError) firstError=headlineInput; 
+            }
+            if (!descInput.value.trim()) { 
+                descInput.classList.add('error'); isValid = false; if(!firstError) firstError=descInput;
+            }
             
             let questions = [];
             const cards = section.querySelectorAll('.question-card');
+            
             cards.forEach(card => {
-                const qt = card.querySelector('.input-q-text');
-                if(!qt.value.trim()) { qt.classList.add('error'); isValid = false; if(!firstError) firstError=qt; }
+                const qTextInput = card.querySelector('.input-q-text');
+                if(!qTextInput.value.trim()) {
+                    qTextInput.classList.add('error'); isValid = false; if(!firstError) firstError=qTextInput;
+                }
+
                 let opts = [];
                 const optInputs = card.querySelectorAll('.input-opt');
-                if(optInputs.length === 0) { isValid = false; alert("Question needs options"); }
-                optInputs.forEach(opt => {
-                    if(!opt.value.trim()) { opt.classList.add('error'); isValid = false; if(!firstError) firstError=opt; }
-                    opts.push(opt.value);
+                
+                if(optInputs.length === 0) {
+                    isValid = false;
+                    alert(`Question "${qTextInput.value}" needs options or should be removed.`);
+                }
+
+                optInputs.forEach(opt => { 
+                    if(opt.value.trim() === "") {
+                        opt.classList.add('error');
+                        isValid = false;
+                        if(!firstError) firstError = opt;
+                    }
+                    opts.push(opt.value); 
                 });
-                questions.push({ text: qt.value, options: opts });
+                questions.push({ text: qTextInput.value, options: opts });
             });
-            data[lang] = { headline: h.value, desc: d.value, questions: questions };
+            data[lang] = { headline: headlineInput.value, desc: descInput.value, questions: questions };
         });
 
-        if (!isValid) { alert("Please fill all fields or remove empty ones."); if(firstError) firstError.scrollIntoView({block:"center"}); return null; }
+        if (!isValid) {
+            alert("All fields must be filled! Please delete any unused options or questions.");
+            if(firstError) firstError.scrollIntoView({behavior: "smooth", block: "center"});
+            return null;
+        }
+
         return data;
     }
 
-    // --- PDF GENERATION ---
+    function savePage2Draft() {
+        const data = {}; 
+        selectedLanguages.forEach(lang => {
+            const section = document.getElementById(`section-${lang}`);
+            const headline = section.querySelector('.input-headline') ? section.querySelector('.input-headline').value : "";
+            const desc = section.querySelector('.input-desc') ? section.querySelector('.input-desc').value : "";
+            let questions = [];
+            section.querySelectorAll('.question-card').forEach(card => {
+                questions.push({ 
+                    text: card.querySelector('.input-q-text').value, 
+                    options: Array.from(card.querySelectorAll('.input-opt')).map(o=>o.value) 
+                });
+            });
+            data[lang] = { headline, desc, questions };
+        });
+        localStorage.setItem('page2Draft', JSON.stringify(data));
+        alert("Draft saved!");
+    }
+
+    // =======================================================
+    // 5. PDF GENERATION
+    // =======================================================
     function generateProfessionalPDF(p1, p2) {
-        // Fill General Info
         document.getElementById('pdf-date').innerText = new Date().toLocaleDateString();
         document.getElementById('pdf-surveyName').innerText = p1.surveyName;
         document.getElementById('pdf-surveyDate').innerText = p1.surveyDate;
@@ -233,20 +389,17 @@
         document.getElementById('pdf-locations').innerText = p1.locName || p1.locPin;
         document.getElementById('pdf-languages').innerText = p1.languages.join(', ');
 
-        // Demographics
         let demo = `Gender: ${p1.gender}`;
         if(p1.gender !== "Male" && p1.gender !== "Female") demo += ` (M: ${p1.maleCount}, F: ${p1.femaleCount})`;
         demo += ` | Age: ${p1.ageTarget === 'Yes' ? p1.customAge : '18-65+'}`;
         document.getElementById('pdf-demographics').innerText = demo;
 
-        // Creatives
         let cHtml = `<table style="width:100%; border:1px solid #ddd; border-collapse:collapse;">
             <tr style="background:#f9f9f9;"><th style="border:1px solid #ddd; padding:5px; text-align:left;">Name</th><th style="border:1px solid #ddd; padding:5px; text-align:left;">URL</th></tr>`;
         p1.creatives.forEach(c => cHtml += `<tr><td style="border:1px solid #ddd; padding:5px;">${c.name}</td><td style="border:1px solid #ddd; padding:5px;">${c.url}</td></tr>`);
         cHtml += `</table>`;
         document.getElementById('pdf-creatives').innerHTML = cHtml;
 
-        // Page 2 Content
         let p2Html = "";
         for (const [lang, content] of Object.entries(p2)) {
             p2Html += `
@@ -268,9 +421,9 @@
         }
         document.getElementById('pdf-page2-content').innerHTML = p2Html;
 
-        // Generate
         const element = document.getElementById('pdf-template');
         element.style.display = 'block';
+        
         return html2pdf().set({
             margin: 0.5, filename: 'Campaign_Request_Formal.pdf',
             image: { type: 'jpeg', quality: 0.98 },
@@ -279,7 +432,9 @@
         }).from(element).save().then(() => element.style.display = 'none');
     }
 
-    // --- SUBMISSION ---
+    // =======================================================
+    // 6. SUBMISSION HANDLER
+    // =======================================================
     document.getElementById('campaignForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const page2Data = validateAndScrape();
@@ -288,9 +443,9 @@
         if (!confirm("Confirm Submission? This will revoke your access to the form.")) return;
 
         const btn = document.querySelector('.submit-btn');
-        btn.innerText = "Submitting..."; btn.disabled = true;
+        btn.innerText = "Processing..."; btn.disabled = true;
 
-        // Prepare Final Payload
+        // Prepare Summary String for Gender Info
         let demoStr = "";
         if (surveyData.ageTarget === "Yes") demoStr += `Age: ${surveyData.customAge} | `;
         else demoStr += `Age: 18-65+ (General) | `;
@@ -298,11 +453,13 @@
         if (surveyData.gender === "All") demoStr += `Gender: All (M: ${surveyData.maleCount}, F: ${surveyData.femaleCount})`;
         else demoStr += `Gender: ${surveyData.gender} (${surveyData.gender==="Male"?surveyData.maleCount:surveyData.femaleCount})`;
 
+        // Combine Data into Master JSON
         const masterJson = { page1: surveyData, page2: page2Data };
 
+        // Construct Final Payload
         const payload = {
-            action: "submit", // IMPORTANT for GAS
-            userEmail: userEmail, // IMPORTANT for Revoking Access
+            action: "submit",
+            userEmail: userEmail,
             payload: {
                 surveyName: surveyData.surveyName,
                 pocName: surveyData.pocName,
@@ -315,28 +472,24 @@
             }
         };
 
+        // 1. Generate PDF -> 2. Send to Google Sheet
         generateProfessionalPDF(surveyData, page2Data).then(() => {
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
                 body: JSON.stringify(payload)
             }).then(() => {
                 alert("Success! PDF Downloaded & Access Revoked.");
-                localStorage.clear(); // Clear local data
-                window.location.href = 'login.html'; // Kick back to login
+                localStorage.clear();
+                window.location.href = 'login.html';
             }).catch(err => {
                 console.error(err);
                 alert("Error sending to server.");
-                btn.innerText = "Submit"; btn.disabled = false;
+                btn.innerText = "Submit Campaign"; btn.disabled = false;
             });
         });
     });
-
-    function savePage2Draft() { /* (Same draft logic as before) */ }
 </script>
 </body>
 </html>
-
-
-
