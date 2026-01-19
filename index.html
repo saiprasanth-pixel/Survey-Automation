@@ -4,12 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campaign Setup - Page 1</title>
-    <script>
-        const userEmail = localStorage.getItem('userEmail');
-        if (!localStorage.getItem('authValid') || !userEmail) {
-            window.location.href = 'login.html';
-        }
-    </script>
     <style>
         :root { --primary: #4F46E5; --primary-hover: #4338ca; --bg-color: #F3F4F6; --card-bg: #ffffff; --text-dark: #1F2937; --text-light: #6B7280; --border: #E5E7EB; --danger: #ef4444; }
         * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
@@ -45,18 +39,12 @@
         .form-footer { margin-top: 40px; display: flex; justify-content: space-between; align-items: center; }
         .next-btn { background-color: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .next-btn:hover { background-color: var(--primary-hover); }
-        .draft-text { color: var(--text-light); font-size: 12px; font-style: italic; }
+        .draft-btn { background-color: white; color: var(--text-dark); border: 1px solid var(--border); padding: 12px 30px; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .draft-btn:hover { background-color: #f3f4f6; }
         @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
-        .user-bar { background: #312e81; color: white; padding: 5px 20px; font-size: 12px; text-align: right; display: flex; justify-content: space-between; }
-        .user-bar a { color: #a5b4fc; text-decoration: none; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="user-bar">
-    <div id="savingIndicator" style="display:none;">Saving draft...</div>
-    <div>Logged in as: <span id="userDisplay">...</span> <a onclick="logout()">[Logout]</a></div>
-</div>
 
 <div class="container">
     <div class="header">
@@ -64,7 +52,7 @@
         <div class="step-indicator">Page 1 of 2</div>
     </div>
 
-    <form id="page1Form" novalidate oninput="autoSave()">
+    <form id="page1Form" novalidate>
         <div class="section-title">General Information</div>
         <div class="form-grid">
             <div class="form-group"><label>Name of the Survey</label><input type="text" id="surveyName" placeholder="e.g. Aspirations Survey" required></div>
@@ -87,12 +75,12 @@
         <div class="form-grid">
             <div class="form-group full-width">
                 <label>Specific Age Targeting?</label>
-                <select id="ageTargetSelect" onchange="toggleAgeInput(); autoSave();"><option value="No" selected>No (General 18-65+)</option><option value="Yes">Yes</option></select>
+                <select id="ageTargetSelect" onchange="toggleAgeInput()"><option value="No" selected>No (General 18-65+)</option><option value="Yes">Yes</option></select>
                 <div id="customAgeInput" class="custom-wrapper"><label style="color: #4F46E5;">Enter Custom Age Ranges</label><input type="text" id="customAgeText" placeholder="e.g. 18-24, 35-60"></div>
             </div>
             <div class="form-group full-width">
                 <label>Gender Targeting</label>
-                <select id="genderSelect" onchange="toggleGenderInputs(); autoSave();"><option value="All" selected>All Genders</option><option value="Male">Male Only</option><option value="Female">Female Only</option></select>
+                <select id="genderSelect" onchange="toggleGenderInputs()"><option value="All" selected>All Genders</option><option value="Male">Male Only</option><option value="Female">Female Only</option></select>
             </div>
             <div class="form-group" id="maleTargetWrapper"><label>Male Target Number</label><input type="number" id="maleTargetNum" placeholder="e.g. 5000"></div>
             <div class="form-group" id="femaleTargetWrapper"><label>Female Target Number</label><input type="number" id="femaleTargetNum" placeholder="e.g. 5000"></div>
@@ -101,12 +89,12 @@
                 <div class="multiselect">
                     <div class="selectBox" onclick="showCheckboxes()"><select><option id="languageDisplayText">Select Languages</option></select><div class="overSelect"></div></div>
                     <div id="checkboxes">
-                        <label><input type="checkbox" value="Telugu" onchange="updateLanguageDisplay(this); autoSave()"> Telugu</label>
-                        <label><input type="checkbox" value="Hindi" onchange="updateLanguageDisplay(this); autoSave()"> Hindi</label>
-                        <label><input type="checkbox" value="Tamil" onchange="updateLanguageDisplay(this); autoSave()"> Tamil</label>
-                        <label><input type="checkbox" value="English" onchange="updateLanguageDisplay(this); autoSave()"> English</label>
-                        <label><input type="checkbox" value="Kannada" onchange="updateLanguageDisplay(this); autoSave()"> Kannada</label>
-                        <label><input type="checkbox" value="Malayalam" onchange="updateLanguageDisplay(this); autoSave()"> Malayalam</label>
+                        <label><input type="checkbox" value="Telugu" onchange="updateLanguageDisplay(this)"> Telugu</label>
+                        <label><input type="checkbox" value="Hindi" onchange="updateLanguageDisplay(this)"> Hindi</label>
+                        <label><input type="checkbox" value="Tamil" onchange="updateLanguageDisplay(this)"> Tamil</label>
+                        <label><input type="checkbox" value="English" onchange="updateLanguageDisplay(this)"> English</label>
+                        <label><input type="checkbox" value="Kannada" onchange="updateLanguageDisplay(this)"> Kannada</label>
+                        <label><input type="checkbox" value="Malayalam" onchange="updateLanguageDisplay(this)"> Malayalam</label>
                     </div>
                 </div>
             </div>
@@ -124,57 +112,19 @@
         </div>
 
         <div class="form-footer">
-            <div class="draft-text" id="draftStatus">Auto-saving enabled</div>
+            <button type="button" class="draft-btn" onclick="saveDraft()">Save as Draft</button>
             <button type="button" class="next-btn" onclick="goToPage2()">Next Page &rarr;</button>
         </div>
     </form>
 </div>
 
 <script>
-    // --- 2. CONFIGURATION ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKcyACMsfTU00X0Uazuh56z5owGpiSFSdqfA68QJvPtR9xmBVWXhGDluz066MnWP5o/exec'; // <--- PASTE YOUR URL HERE
-
-    document.getElementById('userDisplay').innerText = localStorage.getItem('userEmail');
-    
-    // --- 3. INIT & SECURITY CHECK ---
     window.onload = function() {
-        // A. Security: Re-verify access with server to ensure they aren't "Used"
-        verifyStatusOnLoad();
-
-        // B. Load UI Defaults
         toggleGenderInputs();
         toggleAgeInput(); 
-
-        // C. Load Draft
-        loadDraft(); 
+        try { loadDraft(); } catch (e) { console.error("Draft Load Error:", e); }
     };
 
-    function verifyStatusOnLoad() {
-        const email = localStorage.getItem('userEmail');
-        // Silent Fetch
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            redirect: "follow",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ action: "checkStatus", email: email })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (!data.allowed) {
-                // If server says "Used" or "Pending" is gone, kick them out
-                alert("Access Revoked: " + data.message);
-                logout();
-            }
-        })
-        .catch(err => console.log("Background check failed, proceeding offline..."));
-    }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
-
-    // --- UI LOGIC ---
     function toggleGenderInputs() {
         const val = document.getElementById("genderSelect").value;
         const maleDiv = document.getElementById("maleTargetWrapper");
@@ -201,9 +151,8 @@
         </tr>`;
         tbody.insertAdjacentHTML('beforeend', row);
         renumberCreatives();
-        autoSave();
     }
-    function deleteCreativeRow(btn) { btn.closest('tr').remove(); renumberCreatives(); autoSave(); }
+    function deleteCreativeRow(btn) { btn.closest('tr').remove(); renumberCreatives(); }
     function renumberCreatives() { document.querySelectorAll('#creativeBody tr').forEach((row, i) => row.cells[0].innerText = i + 1); }
 
     var expanded = false;
@@ -218,18 +167,6 @@
         checkboxes.forEach(cb => { if(cb.checked) selected.push(cb.value); });
         if (selected.length > 3) { alert("Max 3 languages allowed."); checkbox.checked = false; return; }
         document.getElementById("languageDisplayText").textContent = selected.length ? selected.join(', ') : "Select Languages";
-    }
-
-    // --- AUTO SAVE & DRAFT LOGIC ---
-    let saveTimeout;
-    function autoSave() {
-        clearTimeout(saveTimeout);
-        document.getElementById('draftStatus').innerText = "Saving...";
-        saveTimeout = setTimeout(() => {
-            const data = gatherFormData();
-            localStorage.setItem('page1Draft', JSON.stringify(data));
-            document.getElementById('draftStatus').innerText = "Draft Saved";
-        }, 1000); // Save 1 second after typing stops
     }
 
     function gatherFormData() {
@@ -260,47 +197,48 @@
         };
     }
 
+    function saveDraft() {
+        try {
+            const data = gatherFormData();
+            localStorage.setItem('page1Draft', JSON.stringify(data));
+            alert("Draft saved successfully!");
+        } catch (e) {
+            alert("Could not save draft. Browser storage might be full or disabled.");
+        }
+    }
+
     function loadDraft() {
         const saved = localStorage.getItem('page1Draft');
         if (!saved) return;
         
-        try {
-            const data = JSON.parse(saved);
-            
-            // 1. Simple Fields
-            const fields = ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount", "locName", "locPin", "customAge", "maleTargetNum", "femaleTargetNum"];
-            fields.forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+        const data = JSON.parse(saved);
+        ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount", "locName", "locPin", "customAge", "maleTargetNum", "femaleTargetNum"]
+            .forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
 
-            // 2. Dropdowns & Toggles
-            if(data.ageTarget) { document.getElementById("ageTargetSelect").value = data.ageTarget; toggleAgeInput(); }
-            if(data.gender) { document.getElementById("genderSelect").value = data.gender; toggleGenderInputs(); }
+        if(data.budget) document.getElementById("overallBudget").value = data.budget;
+        if(data.ageTarget) { document.getElementById("ageTargetSelect").value = data.ageTarget; toggleAgeInput(); }
+        if(data.gender) { document.getElementById("genderSelect").value = data.gender; toggleGenderInputs(); }
 
-            // 3. Languages
-            if (data.languages) {
-                const boxes = document.querySelectorAll('#checkboxes input');
-                let hasLangs = false;
-                boxes.forEach(cb => {
-                    if(data.languages.includes(cb.value)) { cb.checked = true; hasLangs = true; }
-                });
-                if(hasLangs) updateLanguageDisplay({checked:true});
-            }
+        if (data.languages) {
+            const boxes = document.querySelectorAll('#checkboxes input');
+            let hasLangs = false;
+            boxes.forEach(cb => { if(data.languages.includes(cb.value)) { cb.checked = true; hasLangs = true; } });
+            if(hasLangs) updateLanguageDisplay({checked:true});
+        }
 
-            // 4. Creatives (Rebuild Table)
-            if (data.creatives && data.creatives.length > 0) {
-                const tbody = document.getElementById("creativeBody");
-                tbody.innerHTML = ''; // Wipe and rebuild
-                data.creatives.forEach((c, index) => {
-                    const row = `<tr>
-                        <td>${index+1}</td>
-                        <td><input type="text" class="c-name" value="${c.name}"></td>
-                        <td><input type="text" class="c-url" value="${c.url}"></td>
-                        <td>${index > 0 ? '<button type="button" class="btn-del-creative" onclick="deleteCreativeRow(this)">Del</button>' : ''}</td>
-                    </tr>`;
-                    tbody.insertAdjacentHTML('beforeend', row);
-                });
-            }
-            document.getElementById('draftStatus').innerText = "Draft Restored";
-        } catch(e) { console.error("Draft load error", e); }
+        if (data.creatives && data.creatives.length > 0) {
+            const tbody = document.getElementById("creativeBody");
+            tbody.innerHTML = ''; 
+            data.creatives.forEach((c, index) => {
+                const row = `<tr>
+                    <td>${index+1}</td>
+                    <td><input type="text" class="c-name" value="${c.name}"></td>
+                    <td><input type="text" class="c-url" value="${c.url}"></td>
+                    <td>${index > 0 ? '<button type="button" class="btn-del-creative" onclick="deleteCreativeRow(this)">Del</button>' : ''}</td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        }
     }
 
     function validateEmail(email) {
@@ -308,16 +246,47 @@
     }
 
     function goToPage2() {
-        // Validation (Abbreviated for brevity - logic remains same as before)
-        if(!document.getElementById("surveyName").value) { alert("Please fill the form"); return; }
-        
+        let isValid = true;
+        let firstError = null;
+        const markError = (el) => { el.classList.add('error'); if (!firstError) firstError = el; isValid = false; };
+        const clearError = (el) => el.classList.remove('error');
+
+        ["surveyName", "surveyDate", "approvalBy", "pocName", "pocEmail", "overallBudget", "locCount"].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) markError(el); else clearError(el);
+        });
+
+        const emailEl = document.getElementById("pocEmail");
+        if (emailEl.value.trim() && !validateEmail(emailEl.value)) { alert("Invalid Email"); markError(emailEl); }
+
+        const locName = document.getElementById("locName");
+        const locPin = document.getElementById("locPin");
+        if (!locName.value.trim() && !locPin.value.trim()) { markError(locName); markError(locPin); alert("Fill Location or Pincode"); } 
+        else { clearError(locName); clearError(locPin); }
+
+        if (document.getElementById("ageTargetSelect").value === "Yes") {
+            const ca = document.getElementById("customAgeText");
+            if (!ca.value.trim()) markError(ca); else clearError(ca);
+        }
+
+        let langs = [];
+        document.querySelectorAll('#checkboxes input:checked').forEach(cb => langs.push(cb.value));
+        if (langs.length === 0) { alert("Select a language"); isValid = false; }
+
+        document.querySelectorAll('#creativeBody tr').forEach(row => {
+            const name = row.querySelector('.c-name');
+            const url = row.querySelector('.c-url');
+            if(!name.value.trim()) markError(name); else clearError(name);
+            if(!url.value.trim()) markError(url); else clearError(url);
+        });
+
+        if (!isValid) { if(firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+
         const data = gatherFormData();
         localStorage.setItem('surveyData', JSON.stringify(data));
-        // Force save draft on exit
-        localStorage.setItem('page1Draft', JSON.stringify(data));
+        localStorage.setItem('page1Draft', JSON.stringify(data)); 
         window.location.href = 'page2.html';
     }
 </script>
 </body>
 </html>
-
